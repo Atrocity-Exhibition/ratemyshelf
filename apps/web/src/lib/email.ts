@@ -29,7 +29,7 @@ export async function sendEmail(message: EmailMessage): Promise<boolean> {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: env.EMAIL_FROM ?? "TrackWn <noreply@trackwn.local>",
+        from: env.EMAIL_FROM ?? "RateMyShelf <noreply@ratemyshelf.local>",
         to: [message.to],
         subject: message.subject,
         html: message.html,

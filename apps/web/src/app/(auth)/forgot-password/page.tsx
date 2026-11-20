@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
             <button
               type="button"
               onClick={() => setSent(false)}
-              className="text-sky-400 hover:underline"
+              className="text-emerald-600 hover:underline dark:text-emerald-400"
             >
               Send another link
             </button>
@@ -70,14 +70,14 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={requestReset.isPending}
-            className="w-full rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:opacity-50"
+            className="w-full rounded-md bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             {requestReset.isPending ? "Sending link…" : "Send reset link"}
           </button>
 
           <p className="text-center text-xs text-slate-400">
             Remembered your password?{" "}
-            <Link href="/login" className="text-sky-400 hover:underline">
+            <Link href="/login" className="text-emerald-600 hover:underline dark:text-emerald-400">
               Sign in
             </Link>
           </p>

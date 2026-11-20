@@ -22,10 +22,10 @@ pnpm db:generate             # prisma generate (packages/db)
 pnpm db:push                 # prisma db push, dev only
 pnpm db:migrate              # prisma migrate deploy
 pnpm db:seed                 # idempotent seed; 38 sample novels
-pnpm db:admin                # seed admin user (admin@trackwn.local / AdminPassword123!)
+pnpm db:admin                # seed admin user (admin@ratemyshelf.local / AdminPassword123!)
 pnpm db:index                # bulk-index novels into Meilisearch
 pnpm db:studio               # Prisma Studio
-pnpm --filter @trackwn/web worker   # pg-boss workers + cron schedules
+pnpm --filter @ratemyshelf/web worker   # pg-boss workers + cron schedules
 k6 run tests/load/novel-browse.js   # optional load test; needs k6 installed
 ```
 
@@ -46,7 +46,7 @@ packages/db/prisma/         schema, migration, extras.sql, seed
 packages/db/src/            client, redis, queue, search singletons
 ```
 
-`@trackwn/db` is consumed as TypeScript source. `apps/web/next.config.ts` sets `transpilePackages: ["@trackwn/db"]`; keep that or imports break.
+`@ratemyshelf/db` is consumed as TypeScript source. `apps/web/next.config.ts` sets `transpilePackages: ["@ratemyshelf/db"]`; keep that or imports break.
 
 ## Non-obvious gotchas
 

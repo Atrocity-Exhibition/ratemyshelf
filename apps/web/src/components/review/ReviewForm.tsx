@@ -134,7 +134,7 @@ export function ReviewForm({ novelId }: { novelId: string }) {
       <button
         type="submit"
         disabled={tooShort || submit.isPending}
-        className="rounded-lg bg-sky-500 px-4 py-2 font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-md bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-neutral-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
       >
         {submit.isPending ? "Submitting…" : "Submit review"}
       </button>

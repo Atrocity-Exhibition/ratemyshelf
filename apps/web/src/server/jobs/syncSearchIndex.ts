@@ -4,7 +4,7 @@ import {
   getSearchClient,
   NOVELS_INDEX,
   toSearchDocument,
-} from "@trackwn/db";
+} from "@ratemyshelf/db";
 
 export async function syncSearchIndex(novelId: string): Promise<void> {
   const index = getSearchClient().index(NOVELS_INDEX);

@@ -49,7 +49,7 @@ export default async function ListPage({ params }: { params: Params }) {
               <span className="w-6 text-right text-sm text-slate-500">
                 {index + 1}.
               </span>
-              <Link href={`/novels/${item.novel.slug}`} className="font-medium text-slate-100 transition-colors hover:text-sky-300">
+              <Link href={`/novels/${item.novel.slug}`} className="font-medium text-neutral-900 transition-colors hover:underline dark:text-neutral-100">
                 {item.novel.title}
               </Link>
               <span className="ml-auto text-xs text-slate-500">

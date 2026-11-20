@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { Country, NovelStatus } from "@prisma/client";
-import { NOVELS_INDEX, getSearchClient } from "@trackwn/db";
+import { NOVELS_INDEX, getSearchClient } from "@ratemyshelf/db";
 import { router, publicProcedure } from "../trpc";
 import { rateLimit } from "@/lib/rateLimit";
 

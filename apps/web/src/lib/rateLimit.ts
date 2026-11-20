@@ -1,4 +1,4 @@
-import { redis } from "@trackwn/db";
+import { redis } from "@ratemyshelf/db";
 
 export type RateLimitResult = {
   allowed: boolean;

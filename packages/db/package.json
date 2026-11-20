@@ -1,5 +1,5 @@
 {
-  "name": "@trackwn/db",
+  "name": "@ratemyshelf/db",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -13,9 +13,9 @@
     "admin": "tsx --env-file=../../.env prisma/seedAdmin.ts",
     "index": "tsx --env-file=../../.env src/search/bulkIndex.ts",
     "studio": "prisma studio",
-    "lint": "echo \"@trackwn/db has no lint target\"",
+    "lint": "echo \"@ratemyshelf/db has no lint target\"",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"@trackwn/db has no tests\""
+    "test": "echo \"@ratemyshelf/db has no tests\""
   },
   "prisma": {
     "seed": "tsx --env-file=../../.env prisma/seed.ts"

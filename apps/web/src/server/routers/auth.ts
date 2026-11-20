@@ -38,18 +38,18 @@ const registerInput = z.object({
 function verificationEmail(to: string, url: string) {
   return {
     to,
-    subject: "Verify your TrackWn email",
-    html: `<p>Welcome to TrackWn. Confirm your email by visiting <a href="${url}">this link</a>.</p><p>The link expires in 24 hours. If you did not create this account, ignore this message.</p>`,
-    text: `Welcome to TrackWn. Confirm your email: ${url} (expires in 24 hours).`,
+    subject: "Verify your RateMyShelf email",
+    html: `<p>Welcome to RateMyShelf (RMS). Confirm your email by visiting <a href="${url}">this link</a>.</p><p>The link expires in 24 hours. If you did not create this account, ignore this message.</p>`,
+    text: `Welcome to RateMyShelf. Confirm your email: ${url} (expires in 24 hours).`,
   };
 }
 
 function passwordResetEmail(to: string, url: string) {
   return {
     to,
-    subject: "Reset your TrackWn password",
-    html: `<p>A password reset was requested for your TrackWn account. You can set a new password by clicking <a href="${url}">this link</a>.</p><p>This link expires in 1 hour. If you did not request a password reset, you can safely ignore this email.</p>`,
-    text: `Reset your TrackWn password: ${url} (expires in 1 hour).`,
+    subject: "Reset your RateMyShelf password",
+    html: `<p>A password reset was requested for your RateMyShelf account. You can set a new password by clicking <a href="${url}">this link</a>.</p><p>This link expires in 1 hour. If you did not request a password reset, you can safely ignore this email.</p>`,
+    text: `Reset your RateMyShelf password: ${url} (expires in 1 hour).`,
   };
 }
 

@@ -28,7 +28,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(configDir, "../.."),
-  transpilePackages: ["@trackwn/db"],
+  transpilePackages: ["@ratemyshelf/db"],
   serverExternalPackages: [
     "isomorphic-dompurify",
     "jsdom",

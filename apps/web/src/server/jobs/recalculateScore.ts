@@ -1,4 +1,4 @@
-import { prisma, cacheDel, cacheSet, getQueue } from "@trackwn/db";
+import { prisma, cacheDel, cacheSet, getQueue } from "@ratemyshelf/db";
 
 const PRIOR_COUNT = 10;
 const PRIOR_MEAN = 5.0;

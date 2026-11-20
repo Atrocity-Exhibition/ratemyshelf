@@ -1,15 +1,20 @@
 import type { NovelDetailData } from "@/types/catalog";
+import { ScoreBadge, getScoreColor } from "@/components/common/ScoreBadge";
 
 function ScoreBar({ label, value }: { label: string; value: number }) {
+  const colors = getScoreColor(value);
+
   return (
     <div className="space-y-1.5">
-      <div className="flex justify-between text-sm">
-        <span className="text-slate-400">{label}</span>
-        <span className="font-semibold text-slate-200">{value.toFixed(2)}</span>
+      <div className="flex justify-between text-xs font-medium">
+        <span className="text-neutral-600 dark:text-neutral-400">{label}</span>
+        <span className={`font-mono font-bold ${colors.text}`}>
+          {value.toFixed(1)}
+        </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-800/80">
+      <div className="h-2 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 transition-all duration-300 shadow-[0_0_8px_rgba(56,189,248,0.25)]"
+          className={`h-full rounded-full transition-all duration-300 ${colors.solidBg}`}
           style={{ width: `${Math.min(100, (value / 10) * 100)}%` }}
         />
       </div>
@@ -21,29 +26,35 @@ export function NovelScorePanel({ novel }: { novel: NovelDetailData }) {
   const score = novel.scoreCache;
   if (!score || score.reviewCount === 0) {
     return (
-      <section className="rounded-xl border border-slate-800/80 bg-slate-900/30 p-4 text-sm text-slate-500">
+      <section className="rounded-xl border border-neutral-200 bg-white p-4 text-sm text-neutral-500 shadow-sm dark:border-neutral-800 dark:bg-[#16171c] dark:text-neutral-400">
         No ratings yet. Be the first to review this novel.
       </section>
     );
   }
 
   return (
-    <section className="space-y-4 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 backdrop-blur-xs shadow-sm">
-      <div className="flex items-baseline gap-3">
-        <span className="text-3xl font-extrabold text-amber-400">
-          ★ {score.bayesianScore.toFixed(2)}
-        </span>
-        <span className="text-sm text-slate-400">
-          Bayesian score · {score.reviewCount} reviews
-        </span>
+    <section className="space-y-5 rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#16171c]">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-100 pb-4 dark:border-neutral-800">
+        <div className="flex items-center gap-4">
+          <ScoreBadge score={score.bayesianScore} size="lg" label="RMS SCORE" />
+          <div>
+            <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+              Community Rating
+            </h3>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">
+              Based on {score.reviewCount} user {score.reviewCount === 1 ? "review" : "reviews"} · Bayesian weighted
+            </p>
+          </div>
+        </div>
       </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <ScoreBar label="Story" value={score.avgStory} />
         <ScoreBar label="Characters" value={score.avgCharacters} />
         <ScoreBar label="World building" value={score.avgWorldBuilding} />
         <ScoreBar label="Overall" value={score.avgOverall} />
         {score.avgTranslation !== null && (
-          <ScoreBar label="Translation" value={score.avgTranslation} />
+          <ScoreBar label="Translation Quality" value={score.avgTranslation} />
         )}
       </div>
     </section>

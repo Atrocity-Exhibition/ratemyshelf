@@ -4,7 +4,7 @@ import type { SearchHit } from "@/types/catalog";
 export function SearchResultCard({ hit }: { hit: SearchHit }) {
   return (
     <article className="rounded-xl border border-slate-800/80 bg-slate-900/40 p-4 transition-all hover:border-slate-700 hover:bg-slate-900/60">
-      <Link href={`/novels/${hit.slug}`} className="font-medium text-slate-100 transition-colors hover:text-sky-300">
+      <Link href={`/novels/${hit.slug}`} className="font-medium text-neutral-900 transition-colors hover:underline dark:text-neutral-100">
         {hit.title}
       </Link>
       {hit.originalTitle && (

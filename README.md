@@ -1,6 +1,6 @@
-# TrackWn
+# RateMyShelf (RMS)
 
-Community catalog, multi-dimensional rating, review and reading-shelf platform for webnovels. TrackWn indexes metadata and external chapter links; it does not host chapters.
+Community catalog, multi-dimensional rating, review and reading-shelf platform for webnovels. RateMyShelf indexes metadata and external chapter links; it does not host chapters.
 
 ## Stack
 

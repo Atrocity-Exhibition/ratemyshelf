@@ -88,7 +88,7 @@ export default function VerifyEmailPage() {
           <button
             type="submit"
             disabled={resend.isPending}
-            className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:opacity-50"
+            className="rounded-md bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             {resend.isPending ? "Sending…" : "Resend link"}
           </button>

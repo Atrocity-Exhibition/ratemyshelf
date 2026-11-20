@@ -1,5 +1,5 @@
 import type { Session } from "next-auth";
-import { prisma, redis, getQueue, type JobName } from "@trackwn/db";
+import { prisma, redis, getQueue, type JobName } from "@ratemyshelf/db";
 import { auth } from "@/auth";
 
 export type Context = {

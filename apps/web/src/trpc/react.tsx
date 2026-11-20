@@ -28,6 +28,8 @@ function SessionRefresher() {
   return null;
 }
 
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
+
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -54,12 +56,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <SessionProvider>
-      <trpc.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          <SessionRefresher />
-          {children}
-        </QueryClientProvider>
-      </trpc.Provider>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            <SessionRefresher />
+            {children}
+          </QueryClientProvider>
+        </trpc.Provider>
+      </ThemeProvider>
     </SessionProvider>
   );
 }

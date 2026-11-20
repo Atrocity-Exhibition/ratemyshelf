@@ -52,15 +52,15 @@ export function ImageUpload({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-slate-400">{label}</span>
+      <div className="flex items-center justify-between text-xs font-semibold text-neutral-700 dark:text-neutral-300">
+        <span>{label}</span>
         <button
           type="button"
           onClick={() => {
             setMode((m) => (m === "file" ? "url" : "file"));
             setError(null);
           }}
-          className="text-xs text-sky-400 hover:underline"
+          className="text-xs text-neutral-600 hover:underline dark:text-neutral-400"
         >
           {mode === "file" ? "Or enter URL" : "Or upload file"}
         </button>
@@ -68,7 +68,7 @@ export function ImageUpload({
 
       {mode === "file" ? (
         <div className="flex items-start gap-4">
-          <div className="relative flex aspect-[3/4] w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/60 shadow-sm">
+          <div className="relative flex aspect-[3/4] w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-neutral-200 bg-neutral-100 shadow-xs dark:border-neutral-800 dark:bg-neutral-900">
             {value ? (
               <Image
                 src={value}
@@ -79,7 +79,7 @@ export function ImageUpload({
                 unoptimized
               />
             ) : (
-              <span className="px-2 text-center text-xs text-slate-500">
+              <span className="px-2 text-center text-[10px] font-semibold uppercase text-neutral-400">
                 No image
               </span>
             )}
@@ -92,22 +92,24 @@ export function ImageUpload({
               accept="image/jpeg,image/png,image/webp,image/gif"
               onChange={handleFileChange}
               disabled={isUploading}
-              className="block w-full text-xs text-slate-400 file:mr-3 file:rounded file:border-0 file:bg-slate-800 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-200 hover:file:bg-slate-700"
+              className="block w-full text-xs text-neutral-600 file:mr-3 file:rounded file:border-0 file:bg-neutral-200 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-neutral-800 hover:file:bg-neutral-300 dark:text-neutral-400 dark:file:bg-neutral-800 dark:file:text-neutral-200 dark:hover:file:bg-neutral-700"
             />
-            <p className="text-xs text-slate-500">
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
               JPEG, PNG, WebP or GIF up to 5MB.
             </p>
             {value && (
               <button
                 type="button"
                 onClick={() => onChange("")}
-                className="text-xs text-red-400 hover:underline"
+                className="text-xs text-rose-600 hover:underline dark:text-rose-400"
               >
                 Remove image
               </button>
             )}
             {isUploading && (
-              <p className="text-xs text-sky-400">Uploading image…</p>
+              <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                Uploading image…
+              </p>
             )}
           </div>
         </div>
@@ -118,13 +120,13 @@ export function ImageUpload({
             value={value ?? ""}
             onChange={(e) => onChange(e.target.value)}
             placeholder="https://example.com/cover.jpg"
-            className="flex-1 rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+            className="flex-1 rounded-md border border-neutral-300 bg-white px-3 py-2 text-xs text-neutral-900 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-100"
           />
           {value && (
             <button
               type="button"
               onClick={() => onChange("")}
-              className="rounded border border-slate-700 px-3 py-2 text-xs text-red-400 hover:bg-slate-800"
+              className="rounded-md border border-neutral-300 px-3 py-2 text-xs text-rose-600 hover:bg-neutral-100 dark:border-neutral-700 dark:text-rose-400 dark:hover:bg-neutral-800"
             >
               Clear
             </button>
@@ -132,7 +134,7 @@ export function ImageUpload({
         </div>
       )}
 
-      {error && <p className="text-xs text-red-400">{error}</p>}
+      {error && <p className="text-xs text-rose-600 dark:text-rose-400">{error}</p>}
     </div>
   );
 }

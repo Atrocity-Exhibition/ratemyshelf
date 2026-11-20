@@ -1,6 +1,6 @@
 import { randomBytes, randomUUID } from "crypto";
 import { cookies } from "next/headers";
-import { redis } from "@trackwn/db";
+import { redis } from "@ratemyshelf/db";
 
 export const REFRESH_COOKIE = "refresh_token";
 export const SESSION_COOKIE =

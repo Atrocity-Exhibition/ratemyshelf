@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { redis } from "@trackwn/db";
+import { redis } from "@ratemyshelf/db";
 
 const VERIFY_TTL_SECONDS = 24 * 60 * 60;
 

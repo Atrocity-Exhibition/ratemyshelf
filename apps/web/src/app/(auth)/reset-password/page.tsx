@@ -34,7 +34,7 @@ function ResetPasswordForm() {
         </p>
         <Link
           href="/forgot-password"
-          className="inline-block text-sky-400 hover:underline"
+          className="inline-block text-emerald-600 hover:underline dark:text-emerald-400"
         >
           Request new reset link →
         </Link>
@@ -51,7 +51,7 @@ function ResetPasswordForm() {
         </p>
         <Link
           href="/login"
-          className="inline-block rounded-lg bg-sky-500 px-4 py-2 font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400"
+          className="inline-block rounded-md bg-neutral-900 px-4 py-2 text-xs font-bold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
         >
           Sign in →
         </Link>
@@ -113,7 +113,7 @@ function ResetPasswordForm() {
       <button
         type="submit"
         disabled={resetMutation.isPending}
-        className="w-full rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:opacity-50"
+        className="w-full rounded-md bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
       >
         {resetMutation.isPending ? "Updating password…" : "Set new password"}
       </button>

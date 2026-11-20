@@ -1,5 +1,5 @@
 import { randomBytes } from "crypto";
-import { redis } from "@trackwn/db";
+import { redis } from "@ratemyshelf/db";
 
 const RESET_TTL_SECONDS = 60 * 60; // 1 hour
 

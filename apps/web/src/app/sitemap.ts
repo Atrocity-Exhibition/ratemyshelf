@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { prisma } from "@trackwn/db";
+import { prisma } from "@ratemyshelf/db";
 
 export const dynamic = "force-dynamic";
 

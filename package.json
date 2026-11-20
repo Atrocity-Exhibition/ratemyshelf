@@ -1,5 +1,5 @@
 {
-  "name": "trackwn",
+  "name": "ratemyshelf",
   "private": true,
   "version": "0.1.0",
   "packageManager": "pnpm@9.12.0",
@@ -7,20 +7,20 @@
     "node": ">=20"
   },
   "scripts": {
-    "dev": "pnpm --filter @trackwn/web dev",
-    "build": "pnpm --filter @trackwn/web build",
-    "start": "pnpm --filter @trackwn/web start",
+    "dev": "pnpm --filter @ratemyshelf/web dev",
+    "build": "pnpm --filter @ratemyshelf/web build",
+    "start": "pnpm --filter @ratemyshelf/web start",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
     "format": "prettier --write .",
-    "db:generate": "pnpm --filter @trackwn/db generate",
-    "db:push": "pnpm --filter @trackwn/db push",
-    "db:migrate": "pnpm --filter @trackwn/db migrate",
-    "db:seed": "pnpm --filter @trackwn/db seed",
-    "db:admin": "pnpm --filter @trackwn/db admin",
-    "db:index": "pnpm --filter @trackwn/db index",
-    "db:studio": "pnpm --filter @trackwn/db studio"
+    "db:generate": "pnpm --filter @ratemyshelf/db generate",
+    "db:push": "pnpm --filter @ratemyshelf/db push",
+    "db:migrate": "pnpm --filter @ratemyshelf/db migrate",
+    "db:seed": "pnpm --filter @ratemyshelf/db seed",
+    "db:admin": "pnpm --filter @ratemyshelf/db admin",
+    "db:index": "pnpm --filter @ratemyshelf/db index",
+    "db:studio": "pnpm --filter @ratemyshelf/db studio"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import type { Role } from "@prisma/client";
-import { prisma } from "@trackwn/db";
+import { prisma } from "@ratemyshelf/db";
 import { env } from "@/env";
 import { issueRefreshToken } from "@/lib/tokens";
 

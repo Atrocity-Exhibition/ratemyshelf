@@ -1,4 +1,4 @@
-import { prisma, getQueue } from "@trackwn/db";
+import { prisma, getQueue } from "@ratemyshelf/db";
 
 const APPROVE_THRESHOLD = 5;
 const REMOVE_THRESHOLD = -5;

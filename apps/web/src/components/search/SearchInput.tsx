@@ -29,7 +29,7 @@ export function SearchInput({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder="Search titles, aliases, genres…"
-        className="w-full rounded-xl border border-slate-700/80 bg-slate-900/60 px-4 py-3.5 pr-16 text-slate-100 placeholder:text-slate-500 backdrop-blur-xs transition focus:border-sky-500/70"
+        className="w-full rounded-xl border border-neutral-300 bg-white px-4 py-3.5 pr-16 text-neutral-900 placeholder:text-neutral-400 transition focus:border-neutral-800 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-100 dark:placeholder:text-neutral-500 dark:focus:border-neutral-400"
         aria-label="Search novels"
       />
       <kbd className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 rounded-md border border-slate-700/80 bg-slate-800/80 px-2 py-0.5 text-xs font-mono text-slate-400">

@@ -1,4 +1,4 @@
-import { prisma, getQueue } from "@trackwn/db";
+import { prisma, getQueue } from "@ratemyshelf/db";
 
 const NEW_ACCOUNT_DAYS = 7;
 const OUTLIER_DELTA = 3;

@@ -43,7 +43,7 @@ export function MyLists({ initialLists }: { initialLists: ListSummary[] }) {
         <button
           type="submit"
           disabled={create.isPending || !title.trim()}
-          className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:opacity-50"
+          className="rounded-md bg-neutral-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
         >
           Create
         </button>
@@ -59,7 +59,7 @@ export function MyLists({ initialLists }: { initialLists: ListSummary[] }) {
               className="flex items-center justify-between rounded-xl border border-slate-800/80 bg-slate-900/40 p-3.5 transition hover:border-slate-700/80"
             >
               <div>
-                <Link href={`/lists/${list.id}`} className="font-medium text-slate-100 transition-colors hover:text-sky-300">
+                <Link href={`/lists/${list.id}`} className="font-medium text-slate-100 transition-colors hover:underline">
                   {list.title}
                 </Link>
                 <p className="mt-0.5 text-xs text-slate-500">

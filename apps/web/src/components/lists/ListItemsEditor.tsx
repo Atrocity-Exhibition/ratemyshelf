@@ -46,7 +46,7 @@ export function ListItemsEditor({
           className="flex items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/40 p-3.5 transition hover:border-slate-700/80"
         >
           <span className="w-6 text-right text-sm text-slate-500">{index + 1}.</span>
-          <Link href={`/novels/${item.novel.slug}`} className="flex-1 font-medium text-slate-100 transition-colors hover:text-sky-300">
+          <Link href={`/novels/${item.novel.slug}`} className="flex-1 font-medium text-neutral-900 transition-colors hover:underline dark:text-neutral-100">
             {item.novel.title}
           </Link>
           <span className="text-xs text-slate-500">{item.novel.chapterCount} ch.</span>
