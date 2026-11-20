@@ -1,0 +1,312 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ANONYMOUS
+  USER
+  CONTRIBUTOR
+  MODERATOR
+  ADMIN
+}
+
+enum NovelStatus {
+  ONGOING
+  COMPLETED
+  HIATUS
+  DROPPED
+}
+
+enum Country {
+  KR
+  CN
+  JP
+  EN
+  OTHER
+}
+
+enum TagCategory {
+  GENRE
+  CONTENT_WARNING
+  THEME
+  SETTING
+  FORMAT
+}
+
+enum ReviewStatus {
+  VISIBLE
+  HIDDEN_BY_USER
+  HIDDEN_BY_MOD
+  FLAGGED
+}
+
+enum ReadStatus {
+  READING
+  COMPLETED
+  ON_HOLD
+  DROPPED
+  PLAN_TO_READ
+}
+
+enum ReportTarget {
+  REVIEW
+  USER
+  NOVEL
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+model User {
+  id              String   @id @default(cuid())
+  username        String   @unique @db.VarChar(32)
+  email           String   @unique
+  passwordHash    String
+  role            Role     @default(USER)
+  accountCreatedAt DateTime @default(now())
+  avatarUrl       String?
+  bio             String?  @db.VarChar(500)
+  isVerified      Boolean  @default(false)
+  isBanned        Boolean  @default(false)
+
+  reviews         Review[]
+  helpfulVotes    ReviewHelpfulVote[]
+  shelfItems      ShelfItem[]
+  lists           UserList[]
+  tagVotes        TagVote[]
+  reportsMade     Report[] @relation("ReportReporter")
+  reportsResolved Report[] @relation("ReportResolver")
+  auditLogs       AuditLog[]
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Novel {
+  id               String        @id @default(cuid())
+  slug             String        @unique
+  title            String
+  originalTitle    String?
+  synopsis         String        @db.Text
+  status           NovelStatus   @default(ONGOING)
+  countryOfOrigin  Country
+  coverImageUrl    String?
+  externalLinks    Json          @default("[]")
+  chapterCount     Int           @default(0)
+  isHidden         Boolean       @default(false)
+
+  aliases          NovelAlias[]
+  tags             NovelTag[]
+  genres           GenreLink[]
+  reviews          Review[]
+  scoreCache       NovelScoreCache?
+  shelfItems       ShelfItem[]
+  listItems        ListItem[]
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([status])
+  @@index([countryOfOrigin])
+  @@index([createdAt])
+}
+
+model NovelAlias {
+  id      String @id @default(cuid())
+  novelId String
+  alias   String
+  novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@index([alias])
+  @@index([novelId])
+}
+
+model Tag {
+  id          String        @id @default(cuid())
+  name        String        @unique @db.VarChar(64)
+  slug        String        @unique
+  description String?
+  category    TagCategory
+  isApproved  Boolean       @default(false)
+
+  novels      NovelTag[]
+  votes       TagVote[]
+
+  createdAt   DateTime      @default(now())
+}
+
+model NovelTag {
+  novelId String
+  tagId   String
+  novel   Novel @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  tag     Tag   @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([novelId, tagId])
+  @@index([tagId])
+}
+
+model GenreLink {
+  id      String @id @default(cuid())
+  novelId String
+  name    String
+  slug    String
+  novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@unique([novelId, slug])
+  @@index([slug])
+}
+
+model Review {
+  id                String       @id @default(cuid())
+  novelId           String
+  userId            String
+  body              String       @db.Text
+  containsSpoiler   Boolean      @default(false)
+  scoreStory        Int
+  scoreTranslation  Int?
+  scoreCharacters   Int
+  scoreWorldBuilding Int
+  scoreOverall      Int
+  helpfulVotes      Int          @default(0)
+  abuseScore        Float        @default(0.0)
+  status            ReviewStatus @default(VISIBLE)
+
+  novel             Novel        @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  user              User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  helpfulVoteRows   ReviewHelpfulVote[]
+
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([novelId, userId])
+  @@index([novelId, status, createdAt])
+  @@index([userId])
+}
+
+model ReviewHelpfulVote {
+  id       String @id @default(cuid())
+  reviewId String
+  userId   String
+  vote     Int
+  review   Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId])
+}
+
+model NovelScoreCache {
+  novelId          String   @id
+  bayesianScore    Float
+  avgStory         Float
+  avgTranslation   Float?
+  avgCharacters    Float
+  avgWorldBuilding Float
+  avgOverall       Float
+  reviewCount      Int
+  updatedAt        DateTime @updatedAt
+
+  novel            Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+}
+
+model ShelfItem {
+  id          String     @id @default(cuid())
+  userId      String
+  novelId     String
+  status      ReadStatus
+  lastChapter Int?
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novel       Novel      @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([userId, novelId])
+  @@index([userId, status])
+}
+
+model UserList {
+  id          String     @id @default(cuid())
+  userId      String
+  title       String     @db.VarChar(100)
+  description String?
+  isPublic    Boolean    @default(true)
+
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       ListItem[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([userId])
+}
+
+model ListItem {
+  listId  String
+  novelId String
+  position Int
+
+  list    UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  novel   Novel    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  @@id([listId, novelId])
+  @@index([listId, position])
+}
+
+model TagVote {
+  id      String @id @default(cuid())
+  tagId   String
+  userId  String
+  novelId String
+  vote    Int
+
+  tag     Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([tagId, userId, novelId])
+  @@index([tagId, novelId])
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  targetType ReportTarget
+  targetId   String
+  reason     String       @db.VarChar(500)
+  status     ReportStatus @default(PENDING)
+  resolvedBy String?
+  resolvedAt DateTime?
+
+  reporter   User         @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  resolver   User?        @relation("ReportResolver", fields: [resolvedBy], references: [id], onDelete: SetNull)
+
+  createdAt  DateTime     @default(now())
+
+  @@index([status, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  action     String
+  targetId   String?
+  targetType String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  actor      User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId, createdAt])
+}

@@ -1,0 +1,34 @@
+{
+  "name": "@trackwn/db",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "prisma generate",
+    "push": "prisma db push",
+    "migrate": "prisma migrate deploy",
+    "migrate:dev": "prisma migrate dev",
+    "seed": "tsx --env-file=../../.env prisma/seed.ts",
+    "index": "tsx --env-file=../../.env src/search/bulkIndex.ts",
+    "studio": "prisma studio",
+    "lint": "echo \"@trackwn/db has no lint target\"",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"@trackwn/db has no tests\""
+  },
+  "prisma": {
+    "seed": "tsx --env-file=../../.env prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "ioredis": "^5.4.1",
+    "meilisearch": "^0.41.0",
+    "pg-boss": "^10.1.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "prisma": "^5.19.1",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4"
+  }
+}

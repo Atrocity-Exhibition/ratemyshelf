@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: trackwn
+          POSTGRES_PASSWORD: trackwn
+          POSTGRES_DB: trackwn
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U trackwn"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://trackwn:trackwn@localhost:5432/trackwn
+      REDIS_URL: redis://localhost:6379
+      MEILISEARCH_HOST: http://localhost:7700
+      MEILISEARCH_API_KEY: masterKey
+      NEXT_PUBLIC_MEILISEARCH_HOST: http://localhost:7700
+      NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY: searchKey
+      AUTH_SECRET: ci-secret-ci-secret-ci-secret
+      SKIP_ENV_VALIDATION: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm db:generate
+
+      - run: pnpm db:migrate
+
+      - name: Apply trigram indexes
+        run: PGPASSWORD=trackwn psql -h localhost -U trackwn -d trackwn -f packages/db/prisma/migrations/001_init/extras.sql
+
+      - run: pnpm lint
+
+      - run: pnpm typecheck
+
+      - run: pnpm test
+
+      - run: pnpm build

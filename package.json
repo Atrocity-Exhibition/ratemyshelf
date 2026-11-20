@@ -1,0 +1,28 @@
+{
+  "name": "trackwn",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @trackwn/web dev",
+    "build": "pnpm --filter @trackwn/web build",
+    "start": "pnpm --filter @trackwn/web start",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "db:generate": "pnpm --filter @trackwn/db generate",
+    "db:push": "pnpm --filter @trackwn/db push",
+    "db:migrate": "pnpm --filter @trackwn/db migrate",
+    "db:seed": "pnpm --filter @trackwn/db seed",
+    "db:index": "pnpm --filter @trackwn/db index",
+    "db:studio": "pnpm --filter @trackwn/db studio"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.4"
+  }
+}
