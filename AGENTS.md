@@ -21,7 +21,8 @@ pnpm test                    # vitest in apps/web; db package is a no-op
 pnpm db:generate             # prisma generate (packages/db)
 pnpm db:push                 # prisma db push, dev only
 pnpm db:migrate              # prisma migrate deploy
-pnpm db:seed                 # idempotent seed; 12 sample novels
+pnpm db:seed                 # idempotent seed; 38 sample novels
+pnpm db:admin                # seed admin user (admin@trackwn.local / AdminPassword123!)
 pnpm db:index                # bulk-index novels into Meilisearch
 pnpm db:studio               # Prisma Studio
 pnpm --filter @trackwn/web worker   # pg-boss workers + cron schedules

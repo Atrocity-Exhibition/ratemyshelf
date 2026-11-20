@@ -18,6 +18,7 @@
     "db:push": "pnpm --filter @trackwn/db push",
     "db:migrate": "pnpm --filter @trackwn/db migrate",
     "db:seed": "pnpm --filter @trackwn/db seed",
+    "db:admin": "pnpm --filter @trackwn/db admin",
     "db:index": "pnpm --filter @trackwn/db index",
     "db:studio": "pnpm --filter @trackwn/db studio"
   },

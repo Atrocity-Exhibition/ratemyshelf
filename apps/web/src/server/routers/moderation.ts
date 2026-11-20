@@ -67,12 +67,16 @@ export const moderationRouter = router({
       });
       if (!report) throw new TRPCError({ code: "NOT_FOUND" });
 
-      return ctx.db.$transaction(async (tx) => {
+      let novelIdToRecalculate: string | null = null;
+
+      const result = await ctx.db.$transaction(async (tx) => {
         if (input.action === "HIDE_REVIEW") {
-          await tx.review.update({
+          const rev = await tx.review.update({
             where: { id: report.targetId },
             data: { status: ReviewStatus.HIDDEN_BY_MOD },
+            select: { novelId: true },
           });
+          novelIdToRecalculate = rev.novelId;
         }
 
         if (input.action === "BAN_USER") {
@@ -112,6 +116,20 @@ export const moderationRouter = router({
           },
         });
       });
+
+      if (novelIdToRecalculate) {
+        await ctx.enqueue("recalculate-novel-score", {
+          novelId: novelIdToRecalculate,
+        });
+      }
+
+      if (input.action === "HIDE_NOVEL") {
+        await ctx.enqueue("sync-search-index", {
+          novelId: report.targetId,
+        });
+      }
+
+      return result;
     }),
 
   flaggedReviews: roleProcedure(Role.MODERATOR)

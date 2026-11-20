@@ -10,6 +10,7 @@
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "seed": "tsx --env-file=../../.env prisma/seed.ts",
+    "admin": "tsx --env-file=../../.env prisma/seedAdmin.ts",
     "index": "tsx --env-file=../../.env src/search/bulkIndex.ts",
     "studio": "prisma studio",
     "lint": "echo \"@trackwn/db has no lint target\"",
@@ -21,12 +22,14 @@
   },
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "bcryptjs": "^2.4.3",
     "ioredis": "^5.4.1",
     "meilisearch": "^0.41.0",
     "pg-boss": "^10.1.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "prisma": "^5.19.1",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4"
