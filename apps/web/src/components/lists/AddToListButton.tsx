@@ -29,13 +29,13 @@ export function AddToListButton({ novelId }: { novelId: string }) {
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
-        className="rounded border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500"
+        className="rounded-lg border border-slate-700/80 bg-slate-900/60 px-3 py-1.5 text-sm font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
       >
         Add to list
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-20 mt-2 w-64 space-y-2 rounded-lg border border-slate-700 bg-slate-900 p-3 shadow-xl">
+        <div className="absolute left-0 top-full z-20 mt-2 w-64 space-y-2 rounded-xl border border-slate-700/80 bg-slate-900/95 p-3 shadow-2xl backdrop-blur-md">
           {!lists || lists.length === 0 ? (
             <p className="text-sm text-slate-500">
               No lists yet. Create one from your dashboard.

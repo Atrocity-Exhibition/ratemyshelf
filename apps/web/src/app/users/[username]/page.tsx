@@ -44,8 +44,8 @@ export default async function UserPage({ params }: { params: Params }) {
 
   return (
     <div className="space-y-8">
-      <header className="flex flex-wrap items-center gap-5 rounded-lg border border-slate-800 bg-slate-900/40 p-6">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-slate-700 bg-slate-800">
+      <header className="flex flex-wrap items-center gap-5 rounded-2xl border border-slate-800/80 bg-slate-900/50 p-6 backdrop-blur-sm shadow-sm">
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-slate-700/80 bg-slate-800/80 shadow-inner">
           {profile.user.avatarUrl ? (
             <Image
               src={profile.user.avatarUrl}
@@ -64,11 +64,11 @@ export default async function UserPage({ params }: { params: Params }) {
 
         <div className="space-y-1.5">
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold text-slate-100">
+            <h1 className="text-2xl font-bold tracking-tight text-white">
               {profile.user.username}
             </h1>
             {isStaff && (
-              <span className="rounded bg-sky-950/80 px-2.5 py-0.5 text-xs font-medium text-sky-400 border border-sky-800/50">
+              <span className="rounded-md bg-sky-950/80 px-2.5 py-0.5 text-xs font-semibold text-sky-400 border border-sky-800/50 shadow-xs">
                 {profile.user.role}
               </span>
             )}
@@ -97,12 +97,12 @@ export default async function UserPage({ params }: { params: Params }) {
             {profile.reviews.map((review) => (
               <li
                 key={review.id}
-                className="space-y-2 rounded-lg border border-slate-800 bg-slate-900/40 p-4"
+                className="space-y-2 rounded-xl border border-slate-800/80 bg-slate-900/40 p-4 transition hover:border-slate-700/80"
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <Link
                     href={`/novels/${review.novel.slug}`}
-                    className="font-medium text-slate-100 hover:text-sky-400"
+                    className="font-medium text-slate-100 transition-colors hover:text-sky-300"
                   >
                     {review.novel.title}
                   </Link>
@@ -139,11 +139,11 @@ export default async function UserPage({ params }: { params: Params }) {
             {profile.lists.map((list) => (
               <li
                 key={list.id}
-                className="rounded-lg border border-slate-800 bg-slate-900/40 p-4 transition hover:border-slate-700"
+                className="rounded-xl border border-slate-800/80 bg-slate-900/40 p-4 transition hover:border-slate-700"
               >
                 <Link
                   href={`/lists/${list.id}`}
-                  className="font-medium text-slate-100 hover:text-sky-400"
+                  className="font-medium text-slate-100 transition-colors hover:text-sky-300"
                 >
                   {list.title}
                 </Link>

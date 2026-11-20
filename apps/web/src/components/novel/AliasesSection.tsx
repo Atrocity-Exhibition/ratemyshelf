@@ -4,8 +4,8 @@ export function AliasesSection({ novel }: { novel: NovelDetailData }) {
   if (novel.aliases.length === 0) return null;
 
   return (
-    <details className="rounded-lg border border-slate-800 p-4">
-      <summary className="cursor-pointer font-semibold">
+    <details className="rounded-xl border border-slate-800/80 bg-slate-900/30 p-4 transition">
+      <summary className="cursor-pointer font-semibold text-slate-200 hover:text-white">
         Known aliases ({novel.aliases.length})
       </summary>
       <ul className="mt-2 list-inside list-disc text-sm text-slate-400">

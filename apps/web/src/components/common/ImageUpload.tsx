@@ -68,7 +68,7 @@ export function ImageUpload({
 
       {mode === "file" ? (
         <div className="flex items-start gap-4">
-          <div className="relative flex aspect-[3/4] w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-700 bg-slate-900">
+          <div className="relative flex aspect-[3/4] w-24 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/60 shadow-sm">
             {value ? (
               <Image
                 src={value}

@@ -41,9 +41,9 @@ export function TagVotePanel({
   const available = (tags ?? []).filter((tag) => !currentTagIds.includes(tag.id));
 
   return (
-    <section className="space-y-3 rounded-lg border border-slate-800 p-4">
-      <h2 className="font-semibold">Community tags</h2>
-      <p className="text-sm text-slate-500">
+    <section className="space-y-3 rounded-xl border border-slate-800/80 bg-slate-900/40 p-4">
+      <h2 className="font-semibold text-slate-200">Community tags</h2>
+      <p className="text-sm text-slate-400">
         Vote on missing tags. A tag is attached at net +5 and removed at net -5.
       </p>
 
@@ -53,7 +53,7 @@ export function TagVotePanel({
           <select
             value={tagId}
             onChange={(event) => setTagId(event.target.value)}
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5"
+            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
           >
             <option value="">Select a tag</option>
             {available.map((tag) => (
@@ -67,7 +67,7 @@ export function TagVotePanel({
           type="button"
           disabled={!tagId || vote.isPending}
           onClick={() => vote.mutate({ tagId, novelId, vote: 1 })}
-          className="rounded bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-40"
+          className="rounded-lg bg-emerald-600 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm shadow-emerald-600/20 transition hover:bg-emerald-500 disabled:opacity-40"
         >
           Upvote
         </button>
@@ -75,20 +75,20 @@ export function TagVotePanel({
           type="button"
           disabled={!tagId || vote.isPending}
           onClick={() => vote.mutate({ tagId, novelId, vote: -1 })}
-          className="rounded border border-red-700 px-3 py-1.5 text-sm text-red-300 disabled:opacity-40"
+          className="rounded-lg border border-red-800/70 bg-red-950/20 px-3.5 py-1.5 text-sm font-medium text-red-300 transition hover:bg-red-900/30 hover:border-red-700 disabled:opacity-40"
         >
           Downvote
         </button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-2 border-t border-slate-800 pt-3">
+      <div className="flex flex-wrap items-end gap-2 border-t border-slate-800/80 pt-3">
         <label className="text-sm">
           <span className="mb-1 block text-slate-400">Propose a tag</span>
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Tag name"
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5"
+            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
           />
         </label>
         <label className="text-sm">
@@ -96,7 +96,7 @@ export function TagVotePanel({
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value as Category)}
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5"
+            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
           >
             {CATEGORIES.map((value) => (
               <option key={value} value={value}>
@@ -109,7 +109,7 @@ export function TagVotePanel({
           type="button"
           disabled={name.trim().length < 2 || propose.isPending}
           onClick={() => propose.mutate({ name: name.trim(), category })}
-          className="rounded border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500 disabled:opacity-40"
+          className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3.5 py-1.5 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-40"
         >
           Propose
         </button>

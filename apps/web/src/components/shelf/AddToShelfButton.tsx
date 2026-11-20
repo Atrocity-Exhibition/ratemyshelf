@@ -56,7 +56,7 @@ export function AddToShelfButton({
           });
         }}
         onClick={(e) => e.stopPropagation()}
-        className="rounded border border-slate-700 bg-slate-900/90 px-1.5 py-0.5 text-[11px] text-slate-300 hover:border-slate-500"
+        className="rounded-md border border-slate-700/70 bg-slate-900/90 px-1.5 py-0.5 text-[11px] font-medium text-slate-300 transition hover:border-slate-500 hover:text-white cursor-pointer"
       >
         <option value="" disabled>
           + Shelf
@@ -83,7 +83,7 @@ export function AddToShelfButton({
             status: event.target.value as ShelfStatus,
           });
         }}
-        className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5 text-sm"
+        className="rounded-lg border border-slate-700/80 bg-slate-900/90 px-2.5 py-1.5 text-sm text-slate-200 transition hover:border-slate-500 cursor-pointer"
       >
         <option value="" disabled>
           Add to shelf…

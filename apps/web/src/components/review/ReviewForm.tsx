@@ -43,7 +43,7 @@ export function ReviewForm({ novelId }: { novelId: string }) {
 
   return (
     <form
-      className="space-y-4 rounded-lg border border-slate-800 bg-slate-900/40 p-4"
+      className="space-y-4 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 backdrop-blur-xs"
       onSubmit={(event) => {
         event.preventDefault();
         if (tooShort) return;
@@ -59,7 +59,7 @@ export function ReviewForm({ novelId }: { novelId: string }) {
         });
       }}
     >
-      <h2 className="text-lg font-semibold">Write a review</h2>
+      <h2 className="text-lg font-semibold text-slate-100">Write a review</h2>
 
       <div className="grid gap-3 sm:grid-cols-2">
         <ScoreSlider
@@ -113,7 +113,7 @@ export function ReviewForm({ novelId }: { novelId: string }) {
           value={body}
           onChange={(event) => setBody(event.target.value)}
           rows={8}
-          className="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
+          className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-slate-100"
           placeholder="What worked, what did not, and who should read it?"
         />
       </label>
@@ -134,7 +134,7 @@ export function ReviewForm({ novelId }: { novelId: string }) {
       <button
         type="submit"
         disabled={tooShort || submit.isPending}
-        className="rounded bg-sky-500 px-4 py-2 font-medium text-slate-950 disabled:cursor-not-allowed disabled:opacity-50"
+        className="rounded-lg bg-sky-500 px-4 py-2 font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {submit.isPending ? "Submitting…" : "Submit review"}
       </button>

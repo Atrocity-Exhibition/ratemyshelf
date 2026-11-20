@@ -41,12 +41,12 @@ function ShelfItemRow({ item }: { item: ShelfItemData }) {
   };
 
   return (
-    <li className="space-y-2 rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+    <li className="space-y-2 rounded-xl border border-slate-800/80 bg-slate-900/40 p-4 transition hover:border-slate-700/80">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex-1 min-w-[200px]">
           <Link
             href={`/novels/${item.novel.slug}`}
-            className="font-medium text-slate-100 hover:text-sky-400"
+            className="font-medium text-slate-100 transition-colors hover:text-sky-300"
           >
             {item.novel.title}
           </Link>
@@ -64,7 +64,7 @@ function ShelfItemRow({ item }: { item: ShelfItemData }) {
                 status: e.target.value as (typeof STATUSES)[number],
               })
             }
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
+            className="rounded-md border border-slate-700/80 bg-slate-950/80 px-2 py-1 text-xs text-slate-200"
           >
             {STATUSES.map((status) => (
               <option key={status} value={status}>
@@ -89,13 +89,13 @@ function ShelfItemRow({ item }: { item: ShelfItemData }) {
                   });
                 }
               }}
-              className="w-16 rounded border border-slate-700 bg-slate-950 px-2 py-1 text-xs"
+              className="w-16 rounded-md border border-slate-700/80 bg-slate-950/80 px-2 py-1 text-xs text-slate-200"
             />
             <button
               type="button"
               onClick={handleIncrement}
               title="Read next chapter"
-              className="rounded border border-slate-700 px-2 py-1 text-xs hover:border-slate-500"
+              className="rounded-md border border-slate-700/80 bg-slate-800/40 px-2 py-1 text-xs font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
             >
               +1
             </button>
@@ -123,9 +123,9 @@ function ShelfItemRow({ item }: { item: ShelfItemData }) {
               {chapter} / {totalChapters} chapters
             </span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded bg-slate-800">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800/80">
             <div
-              className="h-full rounded bg-sky-500 transition-all duration-300"
+              className="h-full rounded-full bg-gradient-to-r from-sky-500 to-cyan-400 transition-all duration-300 shadow-[0_0_8px_rgba(56,189,248,0.25)]"
               style={{ width: `${percentage}%` }}
             />
           </div>
@@ -149,10 +149,10 @@ export function ShelfTabs({ items }: { items: ShelfItemData[] }) {
               key={status}
               type="button"
               onClick={() => setActive(status)}
-              className={`rounded px-3 py-1.5 text-sm ${
+              className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all ${
                 active === status
-                  ? "bg-sky-500 font-medium text-slate-950"
-                  : "border border-slate-700 text-slate-300 hover:border-slate-500"
+                  ? "bg-sky-500 text-slate-950 font-semibold shadow-sm shadow-sky-500/25"
+                  : "border border-slate-700/70 bg-slate-900/40 text-slate-300 hover:border-slate-500 hover:text-white"
               }`}
             >
               {LABELS[status]} ({count})
@@ -162,7 +162,7 @@ export function ShelfTabs({ items }: { items: ShelfItemData[] }) {
       </div>
 
       {visible.length === 0 ? (
-        <p className="rounded border border-dashed border-slate-800 p-8 text-center text-sm text-slate-500">
+        <p className="rounded-xl border border-dashed border-slate-800/80 bg-slate-950/30 p-8 text-center text-sm text-slate-500">
           Nothing on this shelf yet. Browse the catalog to start tracking novels.
         </p>
       ) : (

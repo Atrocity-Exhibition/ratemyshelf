@@ -5,7 +5,7 @@ export function ExternalLinksPanel({ novel }: { novel: NovelDetailData }) {
 
   return (
     <section className="space-y-2">
-      <h2 className="font-semibold">Read elsewhere</h2>
+      <h2 className="font-semibold text-slate-200">Read elsewhere</h2>
       <ul className="flex flex-wrap gap-2">
         {novel.externalLinks.map((link) => (
           <li key={link.url}>
@@ -13,9 +13,9 @@ export function ExternalLinksPanel({ novel }: { novel: NovelDetailData }) {
               href={link.url}
               target="_blank"
               rel="noreferrer noopener"
-              className="rounded border border-slate-700 px-3 py-1.5 text-sm hover:border-slate-500"
+              className="inline-flex items-center rounded-lg border border-slate-700/80 bg-slate-900/60 px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
             >
-              {link.source}
+              {link.source} ↗
             </a>
           </li>
         ))}

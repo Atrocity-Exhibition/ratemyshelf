@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export function SearchEmptyState({ query }: { query: string }) {
   return (
-    <div className="rounded-lg border border-dashed border-slate-800 p-8 text-center">
+    <div className="rounded-xl border border-dashed border-slate-800/80 bg-slate-950/30 p-8 text-center">
       <p className="text-slate-400">
         No novels matched {query ? `“${query}”` : "that query"}.
       </p>

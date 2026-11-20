@@ -44,12 +44,12 @@ export default async function ListPage({ params }: { params: Params }) {
           {list.items.map((item, index) => (
             <li
               key={item.novelId}
-              className="flex items-center gap-3 rounded border border-slate-800 p-3"
+              className="flex items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/40 p-3.5 transition hover:border-slate-700/80"
             >
               <span className="w-6 text-right text-sm text-slate-500">
                 {index + 1}.
               </span>
-              <Link href={`/novels/${item.novel.slug}`} className="font-medium">
+              <Link href={`/novels/${item.novel.slug}`} className="font-medium text-slate-100 transition-colors hover:text-sky-300">
                 {item.novel.title}
               </Link>
               <span className="ml-auto text-xs text-slate-500">

@@ -62,20 +62,39 @@ export default async function NovelsPage({
       <FilterPanel />
       <div className="space-y-4">
         <div className="flex items-baseline justify-between">
-          <h1 className="text-2xl font-bold">Catalog</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Catalog</h1>
           <div className="flex items-center gap-4 text-sm">
-            <Link href="/novels/new">Add a novel</Link>
+            <Link
+              href="/novels/new"
+              className="font-medium text-sky-400 transition hover:text-sky-300"
+            >
+              Add a novel
+            </Link>
             <span className="text-slate-500">{result.total} novels</span>
           </div>
         </div>
         <NovelGrid novels={result.items} emptyMessage="No novels match these filters." />
         {result.totalPages > 1 && (
-          <nav className="flex items-center justify-center gap-2 pt-4">
-            {page > 1 && <Link href={pageHref(page - 1)}>Previous</Link>}
+          <nav className="flex items-center justify-center gap-3 pt-6">
+            {page > 1 && (
+              <Link
+                href={pageHref(page - 1)}
+                className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
+              >
+                Previous
+              </Link>
+            )}
             <span className="text-sm text-slate-500">
               Page {result.page} of {result.totalPages}
             </span>
-            {page < result.totalPages && <Link href={pageHref(page + 1)}>Next</Link>}
+            {page < result.totalPages && (
+              <Link
+                href={pageHref(page + 1)}
+                className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3 py-1.5 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
+              >
+                Next
+              </Link>
+            )}
           </nav>
         )}
       </div>

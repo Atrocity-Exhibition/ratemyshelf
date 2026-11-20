@@ -33,10 +33,10 @@ export function ProfileSettings({
   });
 
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+    <div className="rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 backdrop-blur-xs">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="relative h-12 w-12 overflow-hidden rounded-full border border-slate-700 bg-slate-800">
+          <div className="relative h-12 w-12 overflow-hidden rounded-full border border-slate-700/80 bg-slate-800 shadow-inner">
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
@@ -57,7 +57,7 @@ export function ProfileSettings({
               <span className="font-semibold text-slate-100">
                 {initialUser.username}
               </span>
-              <span className="rounded bg-slate-800 px-2 py-0.5 text-xs text-slate-400">
+              <span className="rounded-md border border-slate-700/60 bg-slate-800/80 px-2 py-0.5 text-xs text-slate-400">
                 {initialUser.role}
               </span>
             </div>
@@ -71,7 +71,7 @@ export function ProfileSettings({
             setIsOpen((v) => !v);
             setNotice(null);
           }}
-          className="rounded border border-slate-700 px-3 py-1.5 text-xs font-medium hover:border-slate-500"
+          className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3 py-1.5 text-xs font-medium text-slate-200 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
         >
           {isOpen ? "Close settings" : "Edit profile"}
         </button>
@@ -85,7 +85,7 @@ export function ProfileSettings({
 
       {isOpen && (
         <form
-          className="mt-4 space-y-4 border-t border-slate-800 pt-4"
+          className="mt-4 space-y-4 border-t border-slate-800/80 pt-4"
           onSubmit={(e) => {
             e.preventDefault();
             update.mutate({
@@ -109,7 +109,7 @@ export function ProfileSettings({
               maxLength={500}
               rows={3}
               placeholder="Tell others what genres and novels you enjoy reading…"
-              className="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
             />
           </label>
 
@@ -117,14 +117,14 @@ export function ProfileSettings({
             <button
               type="submit"
               disabled={update.isPending}
-              className="rounded bg-sky-500 px-4 py-2 text-xs font-medium text-slate-950 disabled:opacity-50"
+              className="rounded-lg bg-sky-500 px-4 py-2 text-xs font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 disabled:opacity-50"
             >
               {update.isPending ? "Saving…" : "Save profile"}
             </button>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded border border-slate-700 px-3 py-2 text-xs hover:bg-slate-800"
+              className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3 py-2 text-xs font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white"
             >
               Cancel
             </button>

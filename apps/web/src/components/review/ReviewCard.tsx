@@ -75,11 +75,11 @@ export function ReviewCard({
     (session?.user.role === "MODERATOR" || session?.user.role === "ADMIN");
 
   return (
-    <article className="space-y-3 rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+    <article className="space-y-3.5 rounded-xl border border-slate-800/80 bg-slate-900/40 p-5 transition hover:border-slate-700/80">
       <div className="flex items-center justify-between text-sm">
         <Link
           href={`/users/${review.user.username}`}
-          className="font-medium hover:text-sky-400"
+          className="font-medium text-slate-200 transition-colors hover:text-sky-300"
         >
           {review.user.username}
         </Link>
@@ -93,25 +93,25 @@ export function ReviewCard({
           const value = review[key];
           if (typeof value !== "number") return null;
           return (
-            <span key={key} className="rounded bg-slate-800 px-2 py-0.5">
+            <span key={key} className="rounded-md border border-slate-700/60 bg-slate-800/60 px-2 py-0.5 text-slate-300">
               {label} {value}/10
             </span>
           );
         })}
         {typeof review.scoreTranslation === "number" && (
-          <span className="rounded bg-slate-800 px-2 py-0.5">
+          <span className="rounded-md border border-slate-700/60 bg-slate-800/60 px-2 py-0.5 text-slate-300">
             Translation {review.scoreTranslation}/10
           </span>
         )}
         {review.status !== "VISIBLE" && (
-          <span className="rounded bg-amber-900/60 px-2 py-0.5 text-amber-200">
+          <span className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-amber-300">
             {review.status.replaceAll("_", " ").toLowerCase()}
           </span>
         )}
       </div>
 
       {review.containsSpoiler ? (
-        <p className="rounded border border-amber-700/50 bg-amber-950/20 p-3 text-sm text-amber-300">
+        <p className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-sm text-amber-300/90">
           Spoiler review hidden. Spoiler content is not sent to browsers that have
           not opted in.
         </p>
@@ -127,7 +127,7 @@ export function ReviewCard({
           type="button"
           disabled={!signedIn || voteHelpful.isPending}
           onClick={() => voteHelpful.mutate({ reviewId: review.id, vote: 1 })}
-          className="rounded border border-slate-700 px-2 py-1 hover:border-slate-500 disabled:opacity-40"
+          className="rounded-md border border-slate-700/80 bg-slate-800/40 px-2.5 py-1 font-medium text-slate-300 hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-40 transition-colors"
           title={signedIn ? "Mark this review helpful" : "Sign in to vote"}
         >
           Helpful ({review.helpfulVotes})

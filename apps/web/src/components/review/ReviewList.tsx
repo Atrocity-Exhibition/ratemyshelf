@@ -47,7 +47,7 @@ export function ReviewList({
               setSort(event.target.value as keyof typeof SORTS);
               setPage(1);
             }}
-            className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5"
+            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
           >
             {Object.entries(SORTS).map(([value, label]) => (
               <option key={value} value={value}>
@@ -72,12 +72,12 @@ export function ReviewList({
           ))}
 
           {data.totalPages > 1 && (
-            <nav className="flex items-center justify-center gap-3 text-sm">
+            <nav className="flex items-center justify-center gap-3 text-sm pt-2">
               <button
                 type="button"
                 disabled={page <= 1}
                 onClick={() => setPage((value) => value - 1)}
-                className="rounded border border-slate-700 px-3 py-1.5 disabled:opacity-40"
+                className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3 py-1.5 font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-40"
               >
                 Previous
               </button>
@@ -88,7 +88,7 @@ export function ReviewList({
                 type="button"
                 disabled={page >= data.totalPages}
                 onClick={() => setPage((value) => value + 1)}
-                className="rounded border border-slate-700 px-3 py-1.5 disabled:opacity-40"
+                className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3 py-1.5 font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-40"
               >
                 Next
               </button>

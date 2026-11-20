@@ -38,12 +38,12 @@ export function MyLists({ initialLists }: { initialLists: ListSummary[] }) {
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           placeholder="New list name"
-          className="flex-1 rounded border border-slate-700 bg-slate-950 px-3 py-2"
+          className="flex-1 rounded-lg border border-slate-700/80 bg-slate-950/80 px-3 py-2 text-slate-100"
         />
         <button
           type="submit"
           disabled={create.isPending || !title.trim()}
-          className="rounded bg-sky-500 px-3 py-2 text-sm font-medium text-slate-950 disabled:opacity-50"
+          className="rounded-lg bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 shadow-sm shadow-sky-500/20 transition hover:bg-sky-400 hover:shadow-sky-500/30 active:scale-[0.98] disabled:opacity-50"
         >
           Create
         </button>
@@ -56,13 +56,13 @@ export function MyLists({ initialLists }: { initialLists: ListSummary[] }) {
           {initialLists.map((list) => (
             <li
               key={list.id}
-              className="flex items-center justify-between rounded border border-slate-800 p-3"
+              className="flex items-center justify-between rounded-xl border border-slate-800/80 bg-slate-900/40 p-3.5 transition hover:border-slate-700/80"
             >
               <div>
-                <Link href={`/lists/${list.id}`} className="font-medium">
+                <Link href={`/lists/${list.id}`} className="font-medium text-slate-100 transition-colors hover:text-sky-300">
                   {list.title}
                 </Link>
-                <p className="text-xs text-slate-500">
+                <p className="mt-0.5 text-xs text-slate-500">
                   {list._count.items} novels · {list.isPublic ? "public" : "private"}
                 </p>
               </div>

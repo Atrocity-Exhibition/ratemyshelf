@@ -43,10 +43,10 @@ export function ListItemsEditor({
       {ordered.map((item, index) => (
         <li
           key={item.novelId}
-          className="flex items-center gap-3 rounded border border-slate-800 p-3"
+          className="flex items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/40 p-3.5 transition hover:border-slate-700/80"
         >
           <span className="w-6 text-right text-sm text-slate-500">{index + 1}.</span>
-          <Link href={`/novels/${item.novel.slug}`} className="flex-1 font-medium">
+          <Link href={`/novels/${item.novel.slug}`} className="flex-1 font-medium text-slate-100 transition-colors hover:text-sky-300">
             {item.novel.title}
           </Link>
           <span className="text-xs text-slate-500">{item.novel.chapterCount} ch.</span>
@@ -54,7 +54,7 @@ export function ListItemsEditor({
             type="button"
             onClick={() => move(index, -1)}
             disabled={index === 0 || reorder.isPending}
-            className="rounded border border-slate-700 px-2 py-1 text-xs disabled:opacity-30"
+            className="rounded-md border border-slate-700/80 bg-slate-800/40 px-2.5 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-30"
             aria-label="Move up"
           >
             ↑
@@ -63,7 +63,7 @@ export function ListItemsEditor({
             type="button"
             onClick={() => move(index, 1)}
             disabled={index === ordered.length - 1 || reorder.isPending}
-            className="rounded border border-slate-700 px-2 py-1 text-xs disabled:opacity-30"
+            className="rounded-md border border-slate-700/80 bg-slate-800/40 px-2.5 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-30"
             aria-label="Move down"
           >
             ↓

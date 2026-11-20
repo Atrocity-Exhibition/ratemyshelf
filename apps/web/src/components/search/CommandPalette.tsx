@@ -42,22 +42,22 @@ export function CommandPalette() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/80 p-4 pt-24"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-slate-950/80 backdrop-blur-sm p-4 pt-24"
       role="dialog"
       aria-modal="true"
       aria-label="Search novels"
       onClick={() => setOpen(false)}
     >
       <div
-        className="w-full max-w-xl overflow-hidden rounded-xl border border-slate-700 bg-slate-900 shadow-2xl"
+        className="w-full max-w-xl overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/95 shadow-2xl shadow-black/80 backdrop-blur-md"
         onClick={(event) => event.stopPropagation()}
       >
         <input
           ref={inputRef}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Jump to a novel…"
-          className="w-full border-b border-slate-800 bg-transparent px-4 py-3 outline-none"
+          placeholder="Jump to a novel… (press Esc to close)"
+          className="w-full border-b border-slate-800 bg-transparent px-4 py-3 outline-none text-slate-100 placeholder:text-slate-500"
         />
         <ul className="max-h-80 overflow-auto p-2">
           {isFetching && (
@@ -70,21 +70,21 @@ export function CommandPalette() {
             <li key={hit.id}>
               <button
                 type="button"
-                className="flex w-full items-center justify-between rounded px-3 py-2 text-left hover:bg-slate-800"
+                className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition hover:bg-slate-800/80 hover:text-white"
                 onClick={() => {
                   setOpen(false);
                   router.push(`/novels/${hit.slug}`);
                 }}
               >
                 <span>
-                  <span className="block font-medium">{hit.title}</span>
+                  <span className="block font-medium text-slate-200">{hit.title}</span>
                   {hit.originalTitle && (
-                    <span className="block text-xs text-slate-500">
+                    <span className="block text-xs text-slate-400">
                       {hit.originalTitle}
                     </span>
                   )}
                 </span>
-                <span className="text-xs text-slate-500">{hit.status}</span>
+                <span className="rounded bg-slate-800/70 px-1.5 py-0.5 text-xs text-slate-400">{hit.status}</span>
               </button>
             </li>
           ))}
