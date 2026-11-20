@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getApi } from "@/trpc/server";
 import { ShelfTabs } from "@/components/shelf/ShelfTabs";
 import { MyLists } from "@/components/lists/MyLists";
+import { ProfileSettings } from "@/components/user/ProfileSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,8 @@ export default async function DashboardPage() {
   if (!session?.user) redirect("/login?callbackUrl=/dashboard");
 
   const api = await getApi();
-  const [shelf, lists] = await Promise.all([
+  const [user, shelf, lists] = await Promise.all([
+    api.auth.me(),
     api.shelves.myShelf(),
     api.lists.myLists(),
   ]);
@@ -21,10 +23,11 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold">My dashboard</h1>
         <p className="text-sm text-slate-400">
-          Signed in as {session.user.name ?? session.user.email}
+          Manage your reading shelves, custom lists, and profile.
         </p>
       </div>
 
+      <ProfileSettings initialUser={user} />
       <ShelfTabs items={shelf as never} />
       <MyLists initialLists={lists as never} />
     </div>

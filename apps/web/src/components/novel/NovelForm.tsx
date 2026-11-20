@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { trpc } from "@/trpc/client";
+import { ImageUpload } from "@/components/common/ImageUpload";
 
 const STATUSES = ["ONGOING", "COMPLETED", "HIATUS", "DROPPED"] as const;
 const COUNTRIES = ["KR", "CN", "JP", "EN", "OTHER"] as const;
@@ -142,16 +143,14 @@ export function NovelForm() {
           />
         </label>
 
-        <label className="block text-sm">
-          <span className="mb-1 block text-slate-400">Cover image URL</span>
-          <input
-            type="url"
+        <div className="sm:col-span-2">
+          <ImageUpload
+            label="Cover image"
+            folder="covers"
             value={form.coverImageUrl}
-            onChange={(event) => update("coverImageUrl", event.target.value)}
-            placeholder="https://…"
-            className="w-full rounded border border-slate-700 bg-slate-950 px-3 py-2"
+            onChange={(url) => update("coverImageUrl", url)}
           />
-        </label>
+        </div>
 
         <label className="block text-sm sm:col-span-2">
           <span className="mb-1 block text-slate-400">Synopsis * (10+ chars)</span>

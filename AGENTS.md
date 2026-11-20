@@ -2,9 +2,9 @@
 
 ## Current state
 
-Working application exists (2026-11-20). `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `SKIP_ENV_VALIDATION=1 pnpm build` pass. Core flows are wired: catalog, search + command palette, novel detail, reviews (with helpful votes, reports, editing, sorting/pagination, spoiler stripping), public user profiles, shelves, custom lists, community tags with moderator approval, contributor submissions, admin novel/moderation queues, and email verification.
+Working application exists (2026-11-20). `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `SKIP_ENV_VALIDATION=1 pnpm build` pass. Core flows are wired: catalog (38 popular seeded novels across KR/CN/JP/EN), search + command palette, novel detail, reviews (with helpful votes, reports, editing, sorting/pagination, spoiler stripping), public user profiles with editable bio/avatar, shelves with progress bars and quick increment, custom lists, community tags with moderator approval, contributor submissions with image uploads (Cloudflare R2 or local fallback), admin novel/moderation queues, and full auth lifecycle (registration, verification, password reset).
 
-Docker services are running and the stack has been smoke-tested: migrations + trigram indexes applied, 12 novels seeded and indexed in Meilisearch, registration/login, tRPC reads/writes, review submission, and worker-driven score recalculation all verified. Dev server and worker are running on :3000. Git is initialized on `master` with a single commit (`feat: initial TrackWn full-stack application`); the working tree is clean.
+Docker services are running and the stack has been smoke-tested: migrations + trigram indexes applied, 38 novels seeded and indexed in Meilisearch, registration/login, tRPC reads/writes, review submission, worker-driven score recalculation, and image upload all verified. Dev server and worker are running on :3000.
 
 The app lives in `apps/web`; the repository root only holds workspace config. Do not add Next.js files at the root — the root `next.config.js` and `tsconfig.json` are intentionally inert placeholders.
 

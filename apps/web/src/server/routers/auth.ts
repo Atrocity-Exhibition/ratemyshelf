@@ -12,9 +12,15 @@ import {
   consumeEmailVerificationToken,
   verificationUrl,
 } from "@/lib/verification";
+import {
+  createPasswordResetToken,
+  consumePasswordResetToken,
+  passwordResetUrl,
+} from "@/lib/passwordReset";
 import { rateLimit } from "@/lib/rateLimit";
 import {
   revokeCurrentRefreshToken,
+  revokeAllUserTokens,
   rotateRefreshToken,
   SESSION_COOKIE,
 } from "@/lib/tokens";
@@ -35,6 +41,15 @@ function verificationEmail(to: string, url: string) {
     subject: "Verify your TrackWn email",
     html: `<p>Welcome to TrackWn. Confirm your email by visiting <a href="${url}">this link</a>.</p><p>The link expires in 24 hours. If you did not create this account, ignore this message.</p>`,
     text: `Welcome to TrackWn. Confirm your email: ${url} (expires in 24 hours).`,
+  };
+}
+
+function passwordResetEmail(to: string, url: string) {
+  return {
+    to,
+    subject: "Reset your TrackWn password",
+    html: `<p>A password reset was requested for your TrackWn account. You can set a new password by clicking <a href="${url}">this link</a>.</p><p>This link expires in 1 hour. If you did not request a password reset, you can safely ignore this email.</p>`,
+    text: `Reset your TrackWn password: ${url} (expires in 1 hour).`,
   };
 }
 
@@ -200,4 +215,91 @@ export const authRouter = router({
     if (!user) throw new TRPCError({ code: "NOT_FOUND" });
     return user;
   }),
+
+  updateProfile: protectedProcedure
+    .input(
+      z.object({
+        bio: z.string().max(500).optional(),
+        avatarUrl: z
+          .string()
+          .url()
+          .or(z.string().regex(/^\/uploads\//))
+          .or(z.literal(""))
+          .optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          ...(input.bio !== undefined ? { bio: input.bio.trim() || null } : {}),
+          ...(input.avatarUrl !== undefined
+            ? { avatarUrl: input.avatarUrl || null }
+            : {}),
+        },
+        select: {
+          id: true,
+          username: true,
+          avatarUrl: true,
+          bio: true,
+        },
+      });
+    }),
+
+  requestPasswordReset: publicProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ ctx, input }) => {
+      const email = input.email.toLowerCase();
+      const limiter = await rateLimit({
+        key: `ratelimit:pwreset:${email}`,
+        limit: 3,
+        windowSeconds: 60 * 60,
+      });
+      if (!limiter.allowed) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      }
+
+      const user = await ctx.db.user.findUnique({
+        where: { email },
+        select: { id: true, isBanned: true },
+      });
+
+      // Always report success so endpoint does not leak user registration status
+      if (user && !user.isBanned) {
+        const token = await createPasswordResetToken(user.id);
+        if (token && emailConfigured()) {
+          await sendEmail(passwordResetEmail(email, passwordResetUrl(token)));
+        }
+      }
+
+      return { ok: true };
+    }),
+
+  resetPassword: publicProcedure
+    .input(
+      z.object({
+        token: z.string().min(10),
+        newPassword: z.string().min(8).max(72),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = await consumePasswordResetToken(input.token);
+      if (!userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "That reset link is invalid or has expired.",
+        });
+      }
+
+      const passwordHash = await hash(input.newPassword, 12);
+      await ctx.db.user.update({
+        where: { id: userId },
+        data: { passwordHash },
+      });
+
+      // Revoke all existing sessions so any compromised tokens are invalidated
+      await revokeAllUserTokens(userId);
+
+      return { ok: true };
+    }),
 });

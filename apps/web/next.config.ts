@@ -36,6 +36,8 @@ const nextConfig: NextConfig = {
     "ioredis",
     "meilisearch",
     "@prisma/client",
+    "@aws-sdk/client-s3",
+    "@aws-sdk/s3-request-presigner",
   ],
   images: {
     remotePatterns: [{ protocol: "https", hostname: "**" }],
