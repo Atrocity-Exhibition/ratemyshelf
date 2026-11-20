@@ -5,6 +5,7 @@ import { httpBatchLink } from "@trpc/client";
 import { SessionProvider, useSession } from "next-auth/react";
 import superjson from "superjson";
 import { useEffect, useState } from "react";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { trpc } from "./client";
 
 function SessionRefresher() {
@@ -27,8 +28,6 @@ function SessionRefresher() {
 
   return null;
 }
-
-import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(

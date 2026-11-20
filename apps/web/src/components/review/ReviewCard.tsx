@@ -27,6 +27,7 @@ export function ReviewCard({
   const [reason, setReason] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
+  const [showSpoiler, setShowSpoiler] = useState(false);
   const [editBody, setEditBody] = useState(review.body);
   const [editSpoiler, setEditSpoiler] = useState(review.containsSpoiler);
   const [editScores, setEditScores] = useState({
@@ -116,15 +117,40 @@ export function ReviewCard({
         )}
       </div>
 
-      {review.containsSpoiler ? (
+      {review.containsSpoiler && !showSpoiler && review.body !== "[SPOILER HIDDEN]" ? (
+        <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
+          <span>This review contains spoilers.</span>
+          <button
+            type="button"
+            onClick={() => setShowSpoiler(true)}
+            className="font-semibold underline hover:no-underline"
+          >
+            Reveal spoiler
+          </button>
+        </div>
+      ) : review.body === "[SPOILER HIDDEN]" ? (
         <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
-          Spoiler review hidden. Content is not revealed without opting in.
+          Spoiler review hidden server-side.
         </p>
       ) : (
-        <div
-          className="prose max-w-none text-xs leading-relaxed text-neutral-700 dark:prose-invert dark:text-neutral-300"
-          dangerouslySetInnerHTML={{ __html: review.body }}
-        />
+        <div className="space-y-2">
+          {review.containsSpoiler && (
+            <div className="flex items-center justify-between text-[11px] text-amber-600 dark:text-amber-400">
+              <span>(Spoiler visible)</span>
+              <button
+                type="button"
+                onClick={() => setShowSpoiler(false)}
+                className="hover:underline"
+              >
+                Hide spoiler
+              </button>
+            </div>
+          )}
+          <div
+            className="prose max-w-none text-xs leading-relaxed text-neutral-700 dark:prose-invert dark:text-neutral-300"
+            dangerouslySetInnerHTML={{ __html: review.body }}
+          />
+        </div>
       )}
 
       <div className="flex flex-wrap items-center gap-3 border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800/80 dark:text-neutral-400">

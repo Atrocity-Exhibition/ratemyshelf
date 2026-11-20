@@ -5,7 +5,6 @@ import { Providers } from "@/trpc/react";
 import { TopBarSearch } from "@/components/search/TopBarSearch";
 import { ProfileDropdown } from "@/components/navigation/ProfileDropdown";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { CommandPalette } from "@/components/search/CommandPalette";
 
 export const metadata: Metadata = {
   title: {
@@ -78,8 +77,6 @@ export default function RootLayout({
           <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8">
             {children}
           </main>
-
-          <CommandPalette />
 
           <footer className="mt-auto border-t border-neutral-200 bg-white py-8 text-center text-xs text-neutral-500 dark:border-neutral-800 dark:bg-[#0f1013] dark:text-neutral-500">
             <p>

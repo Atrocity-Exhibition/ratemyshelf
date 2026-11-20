@@ -7,18 +7,20 @@ import Link from "next/link";
 import { Search, Loader2, X } from "lucide-react";
 import { trpc } from "@/trpc/client";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 export function TopBarSearch() {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebouncedValue(query.trim(), 250);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { data, isFetching } = trpc.search.novels.useQuery(
-    { q: query.trim() },
+    { q: debouncedQuery },
     {
-      enabled: query.trim().length > 0,
+      enabled: debouncedQuery.length > 0,
       staleTime: 60_000,
     },
   );

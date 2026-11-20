@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { Country, NovelStatus } from "@prisma/client";
-import { NOVELS_INDEX, getSearchClient } from "@ratemyshelf/db";
+import { NOVELS_INDEX, getSearchClient, type NovelSearchDocument } from "@ratemyshelf/db";
 import { router, publicProcedure } from "../trpc";
 import { rateLimit } from "@/lib/rateLimit";
 
@@ -54,7 +54,7 @@ export const searchRouter = router({
       });
     }
 
-    const index = getSearchClient().index(NOVELS_INDEX);
+    const index = getSearchClient().index<NovelSearchDocument>(NOVELS_INDEX);
     const sort =
       input.sort === "score"
         ? ["bayesianScore:desc"]

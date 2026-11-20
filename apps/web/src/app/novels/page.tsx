@@ -42,6 +42,7 @@ export default async function NovelsPage({
         filters: {
           status: status && Object.values(NovelStatus).includes(status) ? status : undefined,
           country: country && Object.values(Country).includes(country) ? country : undefined,
+          tags: tagSlugs,
         },
       });
 
@@ -58,7 +59,7 @@ export default async function NovelsPage({
           hit.bayesianScore != null
             ? {
                 bayesianScore: hit.bayesianScore,
-                reviewCount: 0,
+                reviewCount: hit.reviewCount ?? 0,
               }
             : null,
         tags: ((hit.tags as string[] | undefined) ?? []).map((name: string) => ({

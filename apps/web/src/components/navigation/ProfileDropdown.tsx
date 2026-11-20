@@ -27,9 +27,8 @@ export function ProfileDropdown() {
   const user = session?.user;
 
   const logoutMutation = trpc.auth.logout.useMutation({
-    onSuccess: async () => {
+    onSettled: async () => {
       await signOut({ redirect: false });
-      router.refresh();
       window.location.href = "/";
     },
   });
@@ -90,14 +89,16 @@ export function ProfileDropdown() {
           <div className="py-1 text-xs">
             {isAuthenticated ? (
               <>
-                <Link
-                  href={`/users/${user?.name ?? ""}`}
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2 text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
-                >
-                  <User className="h-3.5 w-3.5 text-neutral-400" />
-                  My Profile
-                </Link>
+                {user?.name && (
+                  <Link
+                    href={`/users/${user.name}`}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-2.5 px-3 py-2 text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+                  >
+                    <User className="h-3.5 w-3.5 text-neutral-400" />
+                    My Profile
+                  </Link>
+                )}
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}

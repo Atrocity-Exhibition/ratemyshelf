@@ -55,6 +55,8 @@ export type SearchHit = {
   title: string;
   originalTitle?: string | null;
   coverImageUrl?: string | null;
+  aliases?: string[];
+  synopsis?: string;
   status: string;
   countryOfOrigin: string;
   chapterCount: number;

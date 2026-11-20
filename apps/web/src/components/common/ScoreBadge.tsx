@@ -6,7 +6,7 @@ export function getScoreColor(score: number | null | undefined): {
   border: string;
   solidBg: string;
 } {
-  if (score == null) {
+  if (score == null || !Number.isFinite(score)) {
     return {
       bg: "bg-neutral-100 dark:bg-neutral-800/60",
       text: "text-neutral-500 dark:text-neutral-400",
@@ -60,7 +60,7 @@ export function ScoreBadge({
 }) {
   const colors = getScoreColor(score);
   const displayScore =
-    score != null
+    score != null && Number.isFinite(score)
       ? scale === 100
         ? Math.round(score > 10 ? score : score * 10)
         : score.toFixed(1)

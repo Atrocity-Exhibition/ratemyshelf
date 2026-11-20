@@ -14,6 +14,7 @@ export type NovelSearchDocument = {
   slug: string;
   title: string;
   originalTitle: string | null;
+  coverImageUrl: string | null;
   aliases: string[];
   synopsis: string;
   tags: string[];
@@ -42,6 +43,7 @@ export function toSearchDocument(
     slug: novel.slug,
     title: novel.title,
     originalTitle: novel.originalTitle,
+    coverImageUrl: novel.coverImageUrl,
     aliases: novel.aliases.map((alias) => alias.alias),
     synopsis: novel.synopsis,
     tags: novel.tags.map((entry) => entry.tag.name),

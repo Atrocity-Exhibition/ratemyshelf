@@ -12,7 +12,7 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("");
   const [country, setCountry] = useState("");
-  const debouncedQuery = useDebouncedValue(query, 300);
+  const debouncedQuery = useDebouncedValue(query, 250);
 
   const { data, isFetching, error } = trpc.search.novels.useQuery({
     q: debouncedQuery,
@@ -30,19 +30,21 @@ export default function SearchPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Search</h1>
-        <p className="text-sm text-slate-400">
-          Fuzzy matching across titles, aliases, native-script names and genres.
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+          Search
+        </h1>
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          Fuzzy typo-tolerant matching across titles, aliases, native-script names and genres.
         </p>
       </div>
 
       <SearchInput value={query} onChange={setQuery} />
 
-      <div className="flex flex-wrap gap-3 text-sm">
+      <div className="flex flex-wrap items-center gap-3 text-xs">
         <select
           value={status}
           onChange={(event) => setStatus(event.target.value)}
-          className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5"
+          className="rounded-md border border-neutral-300 bg-white px-2.5 py-1.5 font-medium text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
         >
           <option value="">Any status</option>
           <option value="ONGOING">Ongoing</option>
@@ -53,7 +55,7 @@ export default function SearchPage() {
         <select
           value={country}
           onChange={(event) => setCountry(event.target.value)}
-          className="rounded border border-slate-700 bg-slate-950 px-2 py-1.5"
+          className="rounded-md border border-neutral-300 bg-white px-2.5 py-1.5 font-medium text-neutral-800 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
         >
           <option value="">Any country</option>
           <option value="KR">KR</option>
@@ -63,7 +65,7 @@ export default function SearchPage() {
           <option value="OTHER">Other</option>
         </select>
         {data && (
-          <span className="self-center text-xs text-slate-500">
+          <span className="self-center text-xs text-neutral-500 dark:text-neutral-400">
             {data.totalHits} results · {data.processingTimeMs} ms
             {isFetching ? " · searching…" : ""}
           </span>
@@ -71,20 +73,20 @@ export default function SearchPage() {
       </div>
 
       {error && (
-        <p className="rounded border border-red-900 bg-red-950/30 p-3 text-sm text-red-300">
+        <p className="rounded-lg border border-rose-300 bg-rose-50 p-3 text-xs text-rose-700 dark:border-rose-900/50 dark:bg-rose-950/20 dark:text-rose-400">
           Search is unavailable: {error.message}
         </p>
       )}
 
-      {!error && hits.length === 0 && !isFetching ? (
-        <SearchEmptyState query={debouncedQuery} />
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2">
-          {hits.map((hit) => (
-            <SearchResultCard key={hit.id} hit={hit} />
-          ))}
-        </div>
+      {query && hits.length === 0 && !isFetching && !error && (
+        <SearchEmptyState query={query} />
       )}
+
+      <div className="grid gap-4">
+        {hits.map((hit) => (
+          <SearchResultCard key={hit.id} hit={hit} />
+        ))}
+      </div>
     </div>
   );
 }
