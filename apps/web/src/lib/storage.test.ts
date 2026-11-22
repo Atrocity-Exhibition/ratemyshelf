@@ -12,7 +12,7 @@ describe("uploadImage validation", () => {
     await expect(
       uploadImage(Buffer.from("valid-fake-png-bytes"), "image/png", "avatars"),
     ).rejects.toThrow(
-      "Image uploads are not configured for production. Configure Cloudflare R2.",
+      "Image uploads are not configured for production. Configure Cloudinary or Cloudflare R2.",
     );
   });
 
