@@ -37,13 +37,13 @@ Create a search-only Meilisearch key before starting the app, then put it in
 ```bash
 curl -X POST http://localhost:7700/keys \
   -H 'Authorization: Bearer masterKey' -H 'Content-Type: application/json' \
-  -d '{"description":"TrackWn browser search key","actions":["search"],"indexes":["novels"],"expiresAt":null}'
+  -d '{"description":"RateMyShelf browser search key","actions":["search"],"indexes":["novels"],"expiresAt":null}'
 ```
 
 Run the background worker in a second terminal:
 
 ```bash
-pnpm --filter @trackwn/web worker
+pnpm --filter @ratemyshelf/web worker
 ```
 
 ## Commands
