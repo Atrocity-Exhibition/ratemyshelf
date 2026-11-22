@@ -15,6 +15,20 @@ function maskSpoilerBody(
 }
 
 describe("review rules and validation", () => {
+  it("uses the raw overall average for a single review", () => {
+    const result = calculateRatingAggregates([
+      {
+        scoreOverall: 85,
+        scoreStory: null,
+        scoreCharacters: null,
+        scoreWorldBuilding: null,
+        abuseScore: 0,
+      },
+    ]);
+
+    expect(result.bayesianScore).toBe(85);
+  });
+
   it("accepts an overall-only rating, including a score of zero", () => {
     const shortReview = {
       novelId: "nov_123",

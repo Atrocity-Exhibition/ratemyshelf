@@ -24,17 +24,21 @@ export function calculateRatingAggregates(reviews: RatingForAggregation[]) {
       ) / weight
     );
   };
+  const avgOverall = weighted((review) => review.scoreOverall) ?? 0;
+
   return {
     bayesianScore:
-      (500 +
-        reviews.reduce(
-          (sum, review) => sum + weightOf(review) * review.scoreOverall,
-          0,
-        )) /
-      (10 + totalWeight),
+      reviews.length === 1
+        ? avgOverall
+        : (500 +
+            reviews.reduce(
+              (sum, review) => sum + weightOf(review) * review.scoreOverall,
+              0,
+            )) /
+          (10 + totalWeight),
     avgStory: weighted((review) => review.scoreStory),
     avgCharacters: weighted((review) => review.scoreCharacters),
     avgWorldBuilding: weighted((review) => review.scoreWorldBuilding),
-    avgOverall: weighted((review) => review.scoreOverall) ?? 0,
+    avgOverall,
   };
 }
