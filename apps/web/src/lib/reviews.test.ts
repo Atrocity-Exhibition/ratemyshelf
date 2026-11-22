@@ -15,7 +15,7 @@ function maskSpoilerBody(
 }
 
 describe("review rules and validation", () => {
-  it("uses the raw overall average for a single review", () => {
+  it("uses the raw overall average for fewer than ten reviews", () => {
     const result = calculateRatingAggregates([
       {
         scoreOverall: 85,
@@ -27,6 +27,32 @@ describe("review rules and validation", () => {
     ]);
 
     expect(result.bayesianScore).toBe(85);
+
+    const nineReviews = calculateRatingAggregates(
+      Array.from({ length: 9 }, () => ({
+        scoreOverall: 85,
+        scoreStory: null,
+        scoreCharacters: null,
+        scoreWorldBuilding: null,
+        abuseScore: 0,
+      })),
+    );
+
+    expect(nineReviews.bayesianScore).toBe(85);
+  });
+
+  it("uses Bayesian smoothing starting at ten reviews", () => {
+    const result = calculateRatingAggregates(
+      Array.from({ length: 10 }, () => ({
+        scoreOverall: 85,
+        scoreStory: null,
+        scoreCharacters: null,
+        scoreWorldBuilding: null,
+        abuseScore: 0,
+      })),
+    );
+
+    expect(result.bayesianScore).toBe(67.5);
   });
 
   it("accepts an overall-only rating, including a score of zero", () => {

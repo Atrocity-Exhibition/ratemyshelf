@@ -6,6 +6,8 @@ export type RatingForAggregation = {
   abuseScore: number;
 };
 
+const MIN_BAYESIAN_REVIEWS = 10;
+
 export function calculateRatingAggregates(reviews: RatingForAggregation[]) {
   const weightOf = (review: RatingForAggregation) =>
     Math.max(0, 1 - review.abuseScore);
@@ -28,7 +30,7 @@ export function calculateRatingAggregates(reviews: RatingForAggregation[]) {
 
   return {
     bayesianScore:
-      reviews.length === 1
+      reviews.length < MIN_BAYESIAN_REVIEWS
         ? avgOverall
         : (500 +
             reviews.reduce(
