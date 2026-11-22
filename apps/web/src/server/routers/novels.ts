@@ -3,6 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { Country, NovelStatus, Prisma, Role } from "@prisma/client";
 import { router, publicProcedure, roleProcedure } from "../trpc";
 import { slugify } from "@/lib/slug";
+import { buildRelationClauses } from "@/lib/catalogFilters";
 
 const novelInclude = {
   scoreCache: true,
@@ -17,6 +18,9 @@ const listInput = z.object({
   status: z.nativeEnum(NovelStatus).optional(),
   country: z.nativeEnum(Country).optional(),
   tagSlugs: z.array(z.string()).max(20).optional(),
+  genreSlugs: z.array(z.string()).max(20).optional(),
+  excludeGenreSlugs: z.array(z.string()).max(20).optional(),
+  excludeTagSlugs: z.array(z.string()).max(20).optional(),
   sort: z.enum(["latest", "score", "chapters"]).default("latest"),
 });
 
@@ -50,9 +54,15 @@ export const novelsRouter = router({
     const where: Prisma.NovelWhereInput = { isHidden: false };
     if (input.status) where.status = input.status;
     if (input.country) where.countryOfOrigin = input.country;
-    if (input.tagSlugs?.length) {
-      where.tags = { some: { tag: { slug: { in: input.tagSlugs } } } };
-    }
+    const relationClauses = [
+      ...buildRelationClauses(
+        "genres",
+        input.genreSlugs,
+        input.excludeGenreSlugs,
+      ),
+      ...buildRelationClauses("tags", input.tagSlugs, input.excludeTagSlugs),
+    ];
+    if (relationClauses.length) where.AND = relationClauses;
 
     const orderBy: Prisma.NovelOrderByWithRelationInput =
       input.sort === "score"
@@ -139,7 +149,9 @@ export const novelsRouter = router({
               })),
             },
             tags: {
-              create: tagRows.map((tag) => ({ tag: { connect: { id: tag.id } } })),
+              create: tagRows.map((tag) => ({
+                tag: { connect: { id: tag.id } },
+              })),
             },
           },
           include: novelInclude,
@@ -183,7 +195,10 @@ export const novelsRouter = router({
             ...(genres
               ? {
                   genres: {
-                    create: genres.map((name) => ({ name, slug: slugify(name) })),
+                    create: genres.map((name) => ({
+                      name,
+                      slug: slugify(name),
+                    })),
                   },
                 }
               : {}),

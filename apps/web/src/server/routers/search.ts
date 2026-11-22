@@ -18,7 +18,9 @@ export const searchInput = z.object({
       status: z.nativeEnum(NovelStatus).optional(),
       country: z.nativeEnum(Country).optional(),
       tags: z.array(z.string()).max(20).optional(),
+      excludeTags: z.array(z.string()).max(20).optional(),
       genres: z.array(z.string()).max(20).optional(),
+      excludeGenres: z.array(z.string()).max(20).optional(),
       minScore: z.number().min(0).max(100).optional(),
     })
     .optional(),
@@ -33,14 +35,20 @@ export function buildFilter(
   const clauses: string[] = [];
   if (filters.status) clauses.push(`status = "${filters.status}"`);
   if (filters.country) clauses.push(`countryOfOrigin = "${filters.country}"`);
-  if (filters.tags?.length) {
+  for (const genre of filters.genres ?? []) {
+    clauses.push(`genreSlugs = ${JSON.stringify(genre)}`);
+  }
+  if (filters.excludeGenres?.length) {
     clauses.push(
-      `tags IN [${filters.tags.map((tag) => JSON.stringify(tag)).join(", ")}]`,
+      `genreSlugs NOT IN [${filters.excludeGenres.map((genre) => JSON.stringify(genre)).join(", ")}]`,
     );
   }
-  if (filters.genres?.length) {
+  for (const tag of filters.tags ?? []) {
+    clauses.push(`tagSlugs = ${JSON.stringify(tag)}`);
+  }
+  if (filters.excludeTags?.length) {
     clauses.push(
-      `genres IN [${filters.genres.map((genre) => JSON.stringify(genre)).join(", ")}]`,
+      `tagSlugs NOT IN [${filters.excludeTags.map((tag) => JSON.stringify(tag)).join(", ")}]`,
     );
   }
   if (typeof filters.minScore === "number") {

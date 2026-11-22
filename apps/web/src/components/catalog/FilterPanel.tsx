@@ -26,6 +26,9 @@ export function FilterPanel() {
     Boolean(params.get("status")) ||
     Boolean(params.get("country")) ||
     Boolean(params.get("tags")) ||
+    Boolean(params.get("excludeTags")) ||
+    Boolean(params.get("genres")) ||
+    Boolean(params.get("excludeGenres")) ||
     Boolean(params.get("q")) ||
     params.get("sort") === "score" ||
     params.get("sort") === "chapters";
@@ -99,11 +102,41 @@ export function FilterPanel() {
       </label>
 
       <label className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
-        <span className="mb-1 block">Tag filter</span>
+        <span className="mb-1 block">Include genres</span>
+        <input
+          defaultValue={params.get("genres") ?? ""}
+          onBlur={(event) => update("genres", event.target.value.trim())}
+          placeholder="e.g. fantasy, romance"
+          className="w-full rounded-md border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs font-medium text-neutral-800 placeholder-neutral-400 transition dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500"
+        />
+      </label>
+
+      <label className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <span className="mb-1 block">Exclude genres</span>
+        <input
+          defaultValue={params.get("excludeGenres") ?? ""}
+          onBlur={(event) => update("excludeGenres", event.target.value.trim())}
+          placeholder="e.g. horror"
+          className="w-full rounded-md border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs font-medium text-neutral-800 placeholder-neutral-400 transition dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500"
+        />
+      </label>
+
+      <label className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <span className="mb-1 block">Include tags</span>
         <input
           defaultValue={params.get("tags") ?? ""}
           onBlur={(event) => update("tags", event.target.value.trim())}
           placeholder="e.g. cultivation, isekai"
+          className="w-full rounded-md border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs font-medium text-neutral-800 placeholder-neutral-400 transition dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500"
+        />
+      </label>
+
+      <label className="block text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+        <span className="mb-1 block">Exclude tags</span>
+        <input
+          defaultValue={params.get("excludeTags") ?? ""}
+          onBlur={(event) => update("excludeTags", event.target.value.trim())}
+          placeholder="e.g. harem, tragedy"
           className="w-full rounded-md border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs font-medium text-neutral-800 placeholder-neutral-400 transition dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:placeholder-neutral-500"
         />
       </label>

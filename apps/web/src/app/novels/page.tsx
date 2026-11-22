@@ -5,14 +5,11 @@ import { FilterPanel } from "@/components/catalog/FilterPanel";
 import Link from "next/link";
 import { X, Search } from "lucide-react";
 import type { NovelCardData } from "@/types/catalog";
+import { buildCatalogQuery, parseCatalogQuery } from "@/lib/catalogQuery";
 
 export const dynamic = "force-dynamic";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
-
-function first(value: string | string[] | undefined): string | undefined {
-  return Array.isArray(value) ? value[0] : value;
-}
 
 export default async function NovelsPage({
   searchParams,
@@ -20,12 +17,13 @@ export default async function NovelsPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const page = Math.max(1, Number(first(sp.page) ?? 1) || 1);
-  const status = first(sp.status) as NovelStatus | undefined;
-  const country = first(sp.country) as Country | undefined;
-  const sort = (first(sp.sort) ?? "latest") as "latest" | "score" | "chapters";
-  const tagSlugs = first(sp.tags)?.split(",").filter(Boolean);
-  const q = first(sp.q)?.trim();
+  const query = parseCatalogQuery(sp);
+  const page = query.page ?? 1;
+  const status = query.status as NovelStatus | undefined;
+  const country = query.country as Country | undefined;
+  const sort = (query.sort ?? "latest") as "latest" | "score" | "chapters";
+  const tagSlugs = query.tags;
+  const q = query.q;
 
   const api = await getApi();
   let items: NovelCardData[] = [];
@@ -38,11 +36,25 @@ export default async function NovelsPage({
         q,
         page,
         hitsPerPage: 20,
-        sort: sort === "score" ? "score" : sort === "chapters" ? "chapters" : "relevance",
+        sort:
+          sort === "score"
+            ? "score"
+            : sort === "chapters"
+              ? "chapters"
+              : "relevance",
         filters: {
-          status: status && Object.values(NovelStatus).includes(status) ? status : undefined,
-          country: country && Object.values(Country).includes(country) ? country : undefined,
+          status:
+            status && Object.values(NovelStatus).includes(status)
+              ? status
+              : undefined,
+          country:
+            country && Object.values(Country).includes(country)
+              ? country
+              : undefined,
           tags: tagSlugs,
+          excludeTags: query.excludeTags,
+          genres: query.genres,
+          excludeGenres: query.excludeGenres,
         },
       });
 
@@ -62,13 +74,15 @@ export default async function NovelsPage({
                 reviewCount: hit.reviewCount ?? 0,
               }
             : null,
-        tags: ((hit.tags as string[] | undefined) ?? []).map((name: string) => ({
-          tag: {
-            id: name,
-            name,
-            slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-          },
-        })),
+        tags: ((hit.tags as string[] | undefined) ?? []).map(
+          (name: string) => ({
+            tag: {
+              id: name,
+              name,
+              slug: name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+            },
+          }),
+        ),
       })) as NovelCardData[];
 
       total = searchRes.totalHits;
@@ -81,9 +95,18 @@ export default async function NovelsPage({
       const listRes = await api.novels.list({
         page,
         limit: 20,
-        status: status && Object.values(NovelStatus).includes(status) ? status : undefined,
-        country: country && Object.values(Country).includes(country) ? country : undefined,
+        status:
+          status && Object.values(NovelStatus).includes(status)
+            ? status
+            : undefined,
+        country:
+          country && Object.values(Country).includes(country)
+            ? country
+            : undefined,
         tagSlugs,
+        genreSlugs: query.genres,
+        excludeGenreSlugs: query.excludeGenres,
+        excludeTagSlugs: query.excludeTags,
         sort,
       });
       items = listRes.items;
@@ -94,23 +117,13 @@ export default async function NovelsPage({
     }
   }
 
-  const params = new URLSearchParams();
-  if (q) params.set("q", q);
-  if (status) params.set("status", status);
-  if (country) params.set("country", country);
-  if (sort !== "latest") params.set("sort", sort);
-  if (tagSlugs?.length) params.set("tags", tagSlugs.join(","));
-
   const pageHref = (target: number) => {
-    const next = new URLSearchParams(params.toString());
-    next.set("page", String(target));
+    const next = buildCatalogQuery({ ...query, page: target });
     return `/novels?${next.toString()}`;
   };
 
   const clearQueryHref = () => {
-    const next = new URLSearchParams(params.toString());
-    next.delete("q");
-    next.delete("page");
+    const next = buildCatalogQuery(query, { omitQuery: true, omitPage: true });
     return `/novels${next.toString() ? `?${next.toString()}` : ""}`;
   };
 
@@ -142,7 +155,9 @@ export default async function NovelsPage({
           </div>
 
           <div className="flex items-center gap-4 text-xs font-medium text-neutral-500 dark:text-neutral-400">
-            <span>{total} {total === 1 ? "novel" : "novels"}</span>
+            <span>
+              {total} {total === 1 ? "novel" : "novels"}
+            </span>
             <Link
               href="/novels/new"
               className="rounded-md bg-neutral-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"

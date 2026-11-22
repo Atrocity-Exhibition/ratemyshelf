@@ -1,5 +1,11 @@
 import { MeiliSearch } from "meilisearch";
-import type { Novel, NovelAlias, NovelTag, Tag, GenreLink } from "@prisma/client";
+import type {
+  Novel,
+  NovelAlias,
+  NovelTag,
+  Tag,
+  GenreLink,
+} from "@prisma/client";
 
 export const NOVELS_INDEX = "novels";
 
@@ -18,7 +24,9 @@ export type NovelSearchDocument = {
   aliases: string[];
   synopsis: string;
   tags: string[];
+  tagSlugs: string[];
   genres: string[];
+  genreSlugs: string[];
   status: string;
   countryOfOrigin: string;
   chapterCount: number;
@@ -47,7 +55,9 @@ export function toSearchDocument(
     aliases: novel.aliases.map((alias) => alias.alias),
     synopsis: novel.synopsis,
     tags: novel.tags.map((entry) => entry.tag.name),
+    tagSlugs: novel.tags.map((entry) => entry.tag.slug),
     genres: novel.genres.map((genre) => genre.name),
+    genreSlugs: novel.genres.map((genre) => genre.slug),
     status: novel.status,
     countryOfOrigin: novel.countryOfOrigin,
     chapterCount: novel.chapterCount,
@@ -69,12 +79,16 @@ export async function configureNovelIndex(): Promise<void> {
       "synopsis",
       "tags",
       "genres",
+      "tagSlugs",
+      "genreSlugs",
     ],
     filterableAttributes: [
       "status",
       "countryOfOrigin",
       "tags",
       "genres",
+      "tagSlugs",
+      "genreSlugs",
       "bayesianScore",
       "reviewCount",
     ],

@@ -23,4 +23,21 @@ describe("novel search score filtering", () => {
   it("builds a 100-point Meilisearch score filter", () => {
     expect(buildFilter({ minScore: 85 })).toBe("bayesianScore >= 85");
   });
+
+  it("requires every included genre and excludes any matching genres and tags", () => {
+    expect(
+      buildFilter({
+        genres: ["fantasy", "romance"],
+        excludeGenres: ["horror"],
+        tags: ["slow-burn"],
+        excludeTags: ["harem", "tragedy"],
+      }),
+    ).toBe(
+      'genreSlugs = "fantasy" AND genreSlugs = "romance" AND genreSlugs NOT IN ["horror"] AND tagSlugs = "slow-burn" AND tagSlugs NOT IN ["harem", "tragedy"]',
+    );
+  });
+
+  it("keeps the existing filter output when no genre or tag filters are supplied", () => {
+    expect(buildFilter({ minScore: 85 })).toBe("bayesianScore >= 85");
+  });
 });
