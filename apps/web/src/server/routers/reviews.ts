@@ -21,6 +21,20 @@ export async function assertCanReview(ctx: {
 }
 
 export const reviewsRouter = router({
+  mineForNovel: protectedProcedure
+    .input(z.object({ novelId: z.string().min(1) }))
+    .query(({ ctx, input }) =>
+      ctx.db.review.findUnique({
+        where: {
+          novelId_userId: {
+            novelId: input.novelId,
+            userId: ctx.session.user.id,
+          },
+        },
+        select: { id: true },
+      }),
+    ),
+
   forNovel: publicProcedure
     .input(
       z.object({

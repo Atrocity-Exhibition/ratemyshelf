@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { trpc } from "@/trpc/client";
 import { ScoreSlider } from "./ScoreSlider";
+import { shouldShowReviewForm } from "./reviewFormState";
 
 export function ReviewForm({ novelId }: { novelId: string }) {
   const { status } = useSession();
@@ -17,13 +18,15 @@ export function ReviewForm({ novelId }: { novelId: string }) {
     characters: number | null;
     worldBuilding: number | null;
   }>({ story: null, characters: null, worldBuilding: null });
+  const [submitted, setSubmitted] = useState(false);
+  const { data: existingReview } = trpc.reviews.mineForNovel.useQuery(
+    { novelId },
+    { enabled: status === "authenticated" },
+  );
 
   const submit = trpc.reviews.submit.useMutation({
     onSuccess: () => {
-      setBody("");
-      setContainsSpoiler(false);
-      setOverall(50);
-      setDimensions({ story: null, characters: null, worldBuilding: null });
+      setSubmitted(true);
       void utils.reviews.forNovel.invalidate({ novelId });
       void utils.novels.bySlug.invalidate();
     },
@@ -33,6 +36,15 @@ export function ReviewForm({ novelId }: { novelId: string }) {
     return (
       <p className="rounded-lg border border-slate-800 p-4 text-sm text-slate-400">
         <Link href="/login">Sign in</Link> to rate this novel.
+      </p>
+    );
+  }
+
+  if (!shouldShowReviewForm(status, submitted || Boolean(existingReview))) {
+    return (
+      <p className="rounded-lg border border-slate-800 p-4 text-sm text-slate-400">
+        Your rating is listed below. Use <strong>Edit</strong> on your review to
+        update it.
       </p>
     );
   }
@@ -118,11 +130,6 @@ export function ReviewForm({ novelId }: { novelId: string }) {
       >
         {submit.isPending ? "Submitting…" : "Submit rating"}
       </button>
-      {submit.isSuccess && (
-        <p className="text-sm text-emerald-400">
-          Rating submitted. Scores recalculate shortly.
-        </p>
-      )}
     </form>
   );
 }
