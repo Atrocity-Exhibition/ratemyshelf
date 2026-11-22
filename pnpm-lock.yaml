@@ -57,7 +57,7 @@ importers:
         specifier: ^5.4.1
         version: 5.11.1
       isomorphic-dompurify:
-        specifier: ^2.16.0
+        specifier: 2.16.0
         version: 2.16.0
       lucide-react:
         specifier: ^0.441.0
