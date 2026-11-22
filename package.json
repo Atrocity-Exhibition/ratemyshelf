@@ -18,7 +18,7 @@
     "db:push": "pnpm --filter @ratemyshelf/db push",
     "db:migrate": "pnpm --filter @ratemyshelf/db migrate",
     "db:extras": "pnpm --filter @ratemyshelf/db extras",
-    "db:deploy": "pnpm --filter @ratemyshelf/db deploy",
+    "db:deploy": "pnpm --filter @ratemyshelf/db run deploy",
     "db:seed": "pnpm --filter @ratemyshelf/db seed",
     "db:admin": "pnpm --filter @ratemyshelf/db admin",
     "db:index": "pnpm --filter @ratemyshelf/db index",
