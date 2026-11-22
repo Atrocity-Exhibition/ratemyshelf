@@ -9,6 +9,8 @@
     "push": "prisma db push",
     "migrate": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
+    "extras": "tsx --env-file=../../.env src/applyExtras.ts",
+    "deploy": "prisma migrate deploy && tsx --env-file=../../.env src/applyExtras.ts",
     "seed": "tsx --env-file=../../.env prisma/seed.ts",
     "admin": "tsx --env-file=../../.env prisma/seedAdmin.ts",
     "index": "tsx --env-file=../../.env src/search/bulkIndex.ts",

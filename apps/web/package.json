@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --passWithNoTests",
-    "worker": "tsx --env-file=../../.env src/server/jobs/worker.ts"
+    "worker": "tsx --env-file=../../.env src/server/jobs/worker.ts",
+    "worker:prod": "tsx src/server/jobs/worker.ts"
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
