@@ -1,19 +1,28 @@
-import { PrismaClient, TagCategory, NovelStatus, Country } from "@prisma/client";
+import {
+  PrismaClient,
+  TagCategory,
+  NovelStatus,
+  Country,
+} from "@prisma/client";
+import { CATALOG_CANDIDATES } from "./catalogCandidates";
 
 const prisma = new PrismaClient();
 
 type SeedNovel = {
   slug: string;
   title: string;
+  author?: string;
   originalTitle?: string;
   synopsis: string;
-  status: NovelStatus;
+  status?: NovelStatus;
   countryOfOrigin: Country;
-  chapterCount: number;
+  chapterCount?: number;
   tags: string[];
   genres: string[];
   aliases: string[];
   coverImageUrl?: string;
+  source?: string;
+  sourceUrl?: string;
 };
 
 const TAGS: { name: string; slug: string; category: TagCategory }[] = [
@@ -22,19 +31,47 @@ const TAGS: { name: string; slug: string; category: TagCategory }[] = [
   { name: "LitRPG", slug: "litrpg", category: TagCategory.GENRE },
   { name: "Romance", slug: "romance", category: TagCategory.GENRE },
   { name: "Isekai", slug: "isekai", category: TagCategory.THEME },
-  { name: "Weak to Strong", slug: "weak-to-strong", category: TagCategory.THEME },
+  {
+    name: "Weak to Strong",
+    slug: "weak-to-strong",
+    category: TagCategory.THEME,
+  },
   { name: "Regression", slug: "regression", category: TagCategory.THEME },
   { name: "Reincarnation", slug: "reincarnation", category: TagCategory.THEME },
   { name: "Time Loop", slug: "time-loop", category: TagCategory.THEME },
-  { name: "Kingdom Building", slug: "kingdom-building", category: TagCategory.THEME },
+  {
+    name: "Kingdom Building",
+    slug: "kingdom-building",
+    category: TagCategory.THEME,
+  },
   { name: "Antihero", slug: "antihero", category: TagCategory.THEME },
   { name: "Dungeon", slug: "dungeon", category: TagCategory.SETTING },
-  { name: "Magic Academy", slug: "magic-academy", category: TagCategory.SETTING },
-  { name: "Post-Apocalyptic", slug: "post-apocalyptic", category: TagCategory.SETTING },
-  { name: "Male Protagonist", slug: "male-protagonist", category: TagCategory.SETTING },
-  { name: "Female Protagonist", slug: "female-protagonist", category: TagCategory.SETTING },
+  {
+    name: "Magic Academy",
+    slug: "magic-academy",
+    category: TagCategory.SETTING,
+  },
+  {
+    name: "Post-Apocalyptic",
+    slug: "post-apocalyptic",
+    category: TagCategory.SETTING,
+  },
+  {
+    name: "Male Protagonist",
+    slug: "male-protagonist",
+    category: TagCategory.SETTING,
+  },
+  {
+    name: "Female Protagonist",
+    slug: "female-protagonist",
+    category: TagCategory.SETTING,
+  },
   { name: "Gore", slug: "gore", category: TagCategory.CONTENT_WARNING },
-  { name: "Psychological", slug: "psychological", category: TagCategory.CONTENT_WARNING },
+  {
+    name: "Psychological",
+    slug: "psychological",
+    category: TagCategory.CONTENT_WARNING,
+  },
   { name: "Slow Burn", slug: "slow-burn", category: TagCategory.FORMAT },
   { name: "Multiple POV", slug: "multiple-pov", category: TagCategory.FORMAT },
 ];
@@ -63,7 +100,12 @@ const NOVELS: SeedNovel[] = [
     status: NovelStatus.COMPLETED,
     countryOfOrigin: Country.KR,
     chapterCount: 551,
-    tags: ["male-protagonist", "post-apocalyptic", "psychological", "weak-to-strong"],
+    tags: [
+      "male-protagonist",
+      "post-apocalyptic",
+      "psychological",
+      "weak-to-strong",
+    ],
     genres: ["Action", "Fantasy", "Mystery"],
     aliases: ["ORV", "Jeonjidokja Sijeom"],
   },
@@ -351,7 +393,13 @@ const NOVELS: SeedNovel[] = [
     status: NovelStatus.ONGOING,
     countryOfOrigin: Country.EN,
     chapterCount: 2200,
-    tags: ["litrpg", "weak-to-strong", "antihero", "post-apocalyptic", "male-protagonist"],
+    tags: [
+      "litrpg",
+      "weak-to-strong",
+      "antihero",
+      "post-apocalyptic",
+      "male-protagonist",
+    ],
     genres: ["Dark Fantasy", "Action", "Supernatural"],
     aliases: ["SS"],
   },
@@ -363,7 +411,12 @@ const NOVELS: SeedNovel[] = [
     status: NovelStatus.ONGOING,
     countryOfOrigin: Country.EN,
     chapterCount: 480,
-    tags: ["reincarnation", "magic-academy", "male-protagonist", "weak-to-strong"],
+    tags: [
+      "reincarnation",
+      "magic-academy",
+      "male-protagonist",
+      "weak-to-strong",
+    ],
     genres: ["Fantasy", "Action", "Adventure"],
     aliases: ["TBATE"],
   },
@@ -447,7 +500,13 @@ const NOVELS: SeedNovel[] = [
     status: NovelStatus.ONGOING,
     countryOfOrigin: Country.EN,
     chapterCount: 1500,
-    tags: ["isekai", "litrpg", "female-protagonist", "multiple-pov", "slow-burn"],
+    tags: [
+      "isekai",
+      "litrpg",
+      "female-protagonist",
+      "multiple-pov",
+      "slow-burn",
+    ],
     genres: ["Fantasy", "Slice of Life", "Drama"],
     aliases: ["TWI"],
   },
@@ -462,7 +521,13 @@ const NOVELS: SeedNovel[] = [
     status: NovelStatus.COMPLETED,
     countryOfOrigin: Country.JP,
     chapterCount: 260,
-    tags: ["isekai", "reincarnation", "magic-academy", "male-protagonist", "slow-burn"],
+    tags: [
+      "isekai",
+      "reincarnation",
+      "magic-academy",
+      "male-protagonist",
+      "slow-burn",
+    ],
     genres: ["Fantasy", "Adventure", "Drama"],
     aliases: ["Jobless Reincarnation", "Isekai Ittara Honki Dasu"],
   },
@@ -527,13 +592,93 @@ const NOVELS: SeedNovel[] = [
     status: NovelStatus.COMPLETED,
     countryOfOrigin: Country.JP,
     chapterCount: 600,
-    tags: ["isekai", "dungeon", "litrpg", "female-protagonist", "weak-to-strong"],
+    tags: [
+      "isekai",
+      "dungeon",
+      "litrpg",
+      "female-protagonist",
+      "weak-to-strong",
+    ],
     genres: ["Action", "Adventure", "Fantasy"],
     aliases: ["Kumo Desu ga, Nani ka?"],
   },
 ];
 
+const ALL_NOVELS: SeedNovel[] = [...NOVELS];
+const existingSlugs = new Set(ALL_NOVELS.map((novel) => novel.slug));
+const normalizeName = (value: string) =>
+  value
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9\u00c0-\u024f\u4e00-\u9fff]+/g, "");
+const existingNames = new Set(
+  ALL_NOVELS.flatMap((novel) => [
+    normalizeName(novel.title),
+    ...novel.aliases.map(normalizeName),
+  ]),
+);
+for (const candidate of CATALOG_CANDIDATES) {
+  if (
+    !existingSlugs.has(candidate.slug) &&
+    !existingNames.has(normalizeName(candidate.title)) &&
+    !candidate.aliases.some((alias) => existingNames.has(normalizeName(alias)))
+  ) {
+    ALL_NOVELS.push(candidate);
+    existingSlugs.add(candidate.slug);
+    existingNames.add(normalizeName(candidate.title));
+    for (const alias of candidate.aliases)
+      existingNames.add(normalizeName(alias));
+  }
+}
+
+function validateSeedData(novels: SeedNovel[]) {
+  const slugs = new Set<string>();
+  const names = new Set<string>();
+
+  for (const novel of novels) {
+    if (
+      !novel.slug ||
+      !novel.title ||
+      !novel.synopsis ||
+      !novel.countryOfOrigin
+    ) {
+      throw new Error(
+        `Invalid catalog record: ${novel.slug || novel.title || "untitled"}`,
+      );
+    }
+    if (slugs.has(novel.slug))
+      throw new Error(`Duplicate novel slug: ${novel.slug}`);
+    if (names.has(normalizeName(novel.title))) {
+      throw new Error(`Duplicate novel title: ${novel.title}`);
+    }
+    slugs.add(novel.slug);
+    names.add(normalizeName(novel.title));
+    for (const alias of novel.aliases) {
+      if (names.has(normalizeName(alias))) {
+        throw new Error(`Duplicate novel alias: ${alias}`);
+      }
+      names.add(normalizeName(alias));
+    }
+    if (novel.sourceUrl && !/^https?:\/\/\S+$/.test(novel.sourceUrl)) {
+      throw new Error(`Invalid source URL for ${novel.slug}`);
+    }
+  }
+
+  const counts = new Map<Country, number>();
+  for (const novel of novels) {
+    counts.set(
+      novel.countryOfOrigin,
+      (counts.get(novel.countryOfOrigin) ?? 0) + 1,
+    );
+  }
+  for (const country of [Country.CN, Country.KR, Country.EN]) {
+    if ((counts.get(country) ?? 0) < 10) {
+      throw new Error(`Catalog balance check failed for ${country}`);
+    }
+  }
+}
+
 async function main() {
+  validateSeedData(ALL_NOVELS);
   console.log(`Seeding ${TAGS.length} tags...`);
   for (const tag of TAGS) {
     await prisma.tag.upsert({
@@ -546,28 +691,54 @@ async function main() {
   const tagRows = await prisma.tag.findMany();
   const tagBySlug = new Map(tagRows.map((tag) => [tag.slug, tag]));
 
-  console.log(`Seeding ${NOVELS.length} novels...`);
-  for (const novel of NOVELS) {
+  console.log(`Seeding ${ALL_NOVELS.length} novels...`);
+  for (const novel of ALL_NOVELS) {
     const row = await prisma.novel.upsert({
       where: { slug: novel.slug },
       update: {
         title: novel.title,
+        author: novel.author,
         originalTitle: novel.originalTitle,
         synopsis: novel.synopsis,
-        status: novel.status,
+        ...(novel.status ? { status: novel.status } : {}),
         countryOfOrigin: novel.countryOfOrigin,
-        chapterCount: novel.chapterCount,
+        ...(novel.chapterCount !== undefined
+          ? { chapterCount: novel.chapterCount }
+          : {}),
         coverImageUrl: novel.coverImageUrl,
+        ...(novel.sourceUrl
+          ? {
+              externalLinks: [
+                {
+                  source: novel.source ?? "Source",
+                  url: novel.sourceUrl,
+                },
+              ],
+            }
+          : {}),
       },
       create: {
         slug: novel.slug,
         title: novel.title,
+        author: novel.author,
         originalTitle: novel.originalTitle,
         synopsis: novel.synopsis,
-        status: novel.status,
+        ...(novel.status ? { status: novel.status } : {}),
         countryOfOrigin: novel.countryOfOrigin,
-        chapterCount: novel.chapterCount,
+        ...(novel.chapterCount !== undefined
+          ? { chapterCount: novel.chapterCount }
+          : {}),
         coverImageUrl: novel.coverImageUrl,
+        ...(novel.sourceUrl
+          ? {
+              externalLinks: [
+                {
+                  source: novel.source ?? "Source",
+                  url: novel.sourceUrl,
+                },
+              ],
+            }
+          : {}),
       },
     });
 
@@ -600,7 +771,9 @@ async function main() {
     }
   }
 
-  console.log(`Seed complete: ${NOVELS.length} novels, ${TAGS.length} tags`);
+  console.log(
+    `Seed complete: ${ALL_NOVELS.length} novels, ${TAGS.length} tags`,
+  );
 }
 
 main()

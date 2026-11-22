@@ -94,6 +94,7 @@ model Novel {
   id               String        @id @default(cuid())
   slug             String        @unique
   title            String
+  author           String?
   originalTitle    String?
   synopsis         String        @db.Text
   status           NovelStatus   @default(ONGOING)
