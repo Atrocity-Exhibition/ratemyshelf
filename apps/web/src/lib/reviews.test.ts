@@ -1,19 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { z } from "zod";
 import { calculateRatingAggregates } from "./ratingMath";
-
-const reviewBodySchema = z.string().optional();
-
-const reviewInputSchema = z.object({
-  novelId: z.string().min(1),
-  body: reviewBodySchema,
-  containsSpoiler: z.boolean().default(false),
-  scoreStory: z.number().int().min(1).max(10).optional(),
-  scoreTranslation: z.number().int().min(1).max(10).optional(),
-  scoreCharacters: z.number().int().min(1).max(10).optional(),
-  scoreWorldBuilding: z.number().int().min(1).max(10).optional(),
-  scoreOverall: z.number().int().min(0).max(100),
-});
+import { reviewInput } from "./reviewValidation";
 
 function maskSpoilerBody(
   body: string,
@@ -32,7 +19,7 @@ describe("review rules and validation", () => {
       novelId: "nov_123",
       scoreOverall: 0,
     };
-    const result = reviewInputSchema.safeParse(shortReview);
+    const result = reviewInput.safeParse(shortReview);
     expect(result.success).toBe(true);
   });
 
@@ -45,7 +32,16 @@ describe("review rules and validation", () => {
       scoreWorldBuilding: 9,
       scoreOverall: 100,
     };
-    const result = reviewInputSchema.safeParse(validReview);
+    const result = reviewInput.safeParse(validReview);
+    expect(result.success).toBe(true);
+  });
+
+  it("accepts an explicit null body with omitted dimensions", () => {
+    const result = reviewInput.safeParse({
+      novelId: "nov_123",
+      body: null,
+      scoreOverall: 42,
+    });
     expect(result.success).toBe(true);
   });
 
@@ -57,7 +53,7 @@ describe("review rules and validation", () => {
       scoreWorldBuilding: 5,
       scoreOverall: 101,
     };
-    const result = reviewInputSchema.safeParse(invalidScoreReview);
+    const result = reviewInput.safeParse(invalidScoreReview);
     expect(result.success).toBe(false);
   });
 
@@ -66,10 +62,6 @@ describe("review rules and validation", () => {
     expect(maskSpoilerBody(originalBody, true, false)).toBe("[SPOILER HIDDEN]");
     expect(maskSpoilerBody(originalBody, true, true)).toBe(originalBody);
     expect(maskSpoilerBody(originalBody, false, false)).toBe(originalBody);
-  });
-
-  it("allows a newly created authenticated account to rate", () => {
-    expect(true).toBe(true);
   });
 
   it("includes zero overall ratings and excludes missing dimensions from averages", () => {

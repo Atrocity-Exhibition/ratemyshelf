@@ -4,18 +4,7 @@ import { Role, ReviewStatus } from "@prisma/client";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { sanitizeReviewBody } from "@/lib/sanitize";
 import { rateLimit } from "@/lib/rateLimit";
-
-const reviewBody = z.string().nullable().optional();
-
-const reviewInput = z.object({
-  novelId: z.string().min(1),
-  body: reviewBody,
-  containsSpoiler: z.boolean().default(false),
-  scoreStory: z.number().int().min(1).max(10).nullable().optional(),
-  scoreCharacters: z.number().int().min(1).max(10).nullable().optional(),
-  scoreWorldBuilding: z.number().int().min(1).max(10).nullable().optional(),
-  scoreOverall: z.number().int().min(0).max(100),
-});
+import { reviewInput } from "@/lib/reviewValidation";
 
 async function assertCanReview(ctx: {
   db: { user: { findUnique: Function } };

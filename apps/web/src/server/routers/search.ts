@@ -1,11 +1,15 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { Country, NovelStatus } from "@prisma/client";
-import { NOVELS_INDEX, getSearchClient, type NovelSearchDocument } from "@ratemyshelf/db";
+import {
+  NOVELS_INDEX,
+  getSearchClient,
+  type NovelSearchDocument,
+} from "@ratemyshelf/db";
 import { router, publicProcedure } from "../trpc";
 import { rateLimit } from "@/lib/rateLimit";
 
-const searchInput = z.object({
+export const searchInput = z.object({
   q: z.string().max(200).default(""),
   page: z.number().int().min(1).default(1),
   hitsPerPage: z.number().int().min(1).max(50).default(20),
@@ -15,18 +19,24 @@ const searchInput = z.object({
       country: z.nativeEnum(Country).optional(),
       tags: z.array(z.string()).max(20).optional(),
       genres: z.array(z.string()).max(20).optional(),
-      minScore: z.number().min(0).max(10).optional(),
+      minScore: z.number().min(0).max(100).optional(),
     })
     .optional(),
-  sort: z.enum(["relevance", "score", "latest", "chapters"]).default("relevance"),
+  sort: z
+    .enum(["relevance", "score", "latest", "chapters"])
+    .default("relevance"),
 });
 
-function buildFilter(filters: NonNullable<z.infer<typeof searchInput>["filters"]>) {
+export function buildFilter(
+  filters: NonNullable<z.infer<typeof searchInput>["filters"]>,
+) {
   const clauses: string[] = [];
   if (filters.status) clauses.push(`status = "${filters.status}"`);
   if (filters.country) clauses.push(`countryOfOrigin = "${filters.country}"`);
   if (filters.tags?.length) {
-    clauses.push(`tags IN [${filters.tags.map((tag) => JSON.stringify(tag)).join(", ")}]`);
+    clauses.push(
+      `tags IN [${filters.tags.map((tag) => JSON.stringify(tag)).join(", ")}]`,
+    );
   }
   if (filters.genres?.length) {
     clauses.push(

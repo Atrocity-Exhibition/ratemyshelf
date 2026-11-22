@@ -10,7 +10,7 @@ function ScoreBar({
   value: number;
   scale?: 10 | 100;
 }) {
-  const colors = getScoreColor(value);
+  const colors = getScoreColor(value, scale);
 
   return (
     <div className="space-y-1.5">
@@ -44,7 +44,12 @@ export function NovelScorePanel({ novel }: { novel: NovelDetailData }) {
     <section className="space-y-5 rounded-xl border border-neutral-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-[#16171c]">
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-100 pb-4 dark:border-neutral-800">
         <div className="flex items-center gap-4">
-          <ScoreBadge score={score.bayesianScore} size="lg" label="RMS SCORE" />
+          <ScoreBadge
+            score={score.bayesianScore}
+            size="lg"
+            label="RMS SCORE"
+            scale={100}
+          />
           <div>
             <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
               Community Rating

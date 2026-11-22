@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 
-export function getScoreColor(score: number | null | undefined): {
+export function getScoreColor(
+  score: number | null | undefined,
+  scale: 10 | 100 = 10,
+): {
   bg: string;
   text: string;
   border: string;
@@ -15,7 +18,7 @@ export function getScoreColor(score: number | null | undefined): {
     };
   }
 
-  const normalized = score > 10 ? score / 10 : score;
+  const normalized = (score / scale) * 10;
 
   if (normalized >= 7.0) {
     // High / Universal Acclaim (AOTY Green)
@@ -57,7 +60,7 @@ export function ScoreBadge({
   size?: "sm" | "md" | "lg";
   scale?: 10 | 100;
 }) {
-  const colors = getScoreColor(score);
+  const colors = getScoreColor(score, scale);
   const displayScore =
     score != null && Number.isFinite(score)
       ? scale === 100
