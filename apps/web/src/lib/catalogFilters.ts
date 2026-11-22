@@ -1,15 +1,28 @@
 import type { Prisma } from "@prisma/client";
+import { z } from "zod";
+
+const slugSchema = z
+  .string()
+  .trim()
+  .regex(/^[a-z0-9][a-z0-9-]*$/, "Invalid slug");
+
+export const slugArraySchema = z
+  .array(slugSchema)
+  .transform((slugs) => [...new Set(slugs)])
+  .pipe(z.array(slugSchema).max(20));
+
+export function normalizeSlugArray(values: readonly string[]): string[] {
+  return slugArraySchema.parse(values);
+}
 
 export function parseSlugList(value: string | undefined): string[] {
   if (!value) return [];
-  return [
-    ...new Set(
-      value
-        .split(",")
-        .map((slug) => slug.trim())
-        .filter((slug) => /^[a-z0-9][a-z0-9-]*$/.test(slug)),
-    ),
-  ];
+  return normalizeSlugArray(
+    value
+      .split(",")
+      .map((slug) => slug.trim())
+      .filter((slug) => /^[a-z0-9][a-z0-9-]*$/.test(slug)),
+  );
 }
 
 export function buildRelationClauses(

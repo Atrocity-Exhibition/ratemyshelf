@@ -54,6 +54,12 @@ Put the returned key in `NEXT_PUBLIC_MEILISEARCH_SEARCH_KEY`. Then index the cat
 pnpm db:index         # applies index settings + bulk loads novels
 ```
 
+**Required after deploying the genre/tag filter release:** run `pnpm db:index`
+against the production database and Meilisearch credentials. This rebuilds
+existing documents with the `genreSlugs` and `tagSlugs` fields and applies
+their filterable-attribute settings; without it, the new filters will not
+work for existing novels.
+
 Novel mutations enqueue `sync-search-index` jobs, so the worker must be running for the index to stay current.
 
 ## 4. Deploy the web app to Vercel

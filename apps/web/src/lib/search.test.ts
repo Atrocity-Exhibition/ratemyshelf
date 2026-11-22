@@ -40,4 +40,33 @@ describe("novel search score filtering", () => {
   it("keeps the existing filter output when no genre or tag filters are supplied", () => {
     expect(buildFilter({ minScore: 85 })).toBe("bayesianScore >= 85");
   });
+
+  it("normalizes direct search slug arrays", () => {
+    expect(
+      searchInput.parse({
+        filters: {
+          genres: [" fantasy ", "fantasy"],
+          excludeTags: [" slow-burn "],
+        },
+      }).filters,
+    ).toEqual({
+      genres: ["fantasy"],
+      excludeTags: ["slow-burn"],
+    });
+  });
+
+  it("rejects malformed and excessive direct search slug arrays", () => {
+    expect(
+      searchInput.safeParse({
+        filters: { tags: ["not a slug"] },
+      }).success,
+    ).toBe(false);
+    expect(
+      searchInput.safeParse({
+        filters: {
+          genres: Array.from({ length: 21 }, (_, i) => `genre-${i}`),
+        },
+      }).success,
+    ).toBe(false);
+  });
 });

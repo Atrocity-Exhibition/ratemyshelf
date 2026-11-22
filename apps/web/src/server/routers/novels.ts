@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { Country, NovelStatus, Prisma, Role } from "@prisma/client";
 import { router, publicProcedure, roleProcedure } from "../trpc";
 import { slugify } from "@/lib/slug";
-import { buildRelationClauses } from "@/lib/catalogFilters";
+import { buildRelationClauses, slugArraySchema } from "@/lib/catalogFilters";
 
 const novelInclude = {
   scoreCache: true,
@@ -12,15 +12,15 @@ const novelInclude = {
   tags: { include: { tag: true } },
 } satisfies Prisma.NovelInclude;
 
-const listInput = z.object({
+export const listInput = z.object({
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(50).default(20),
   status: z.nativeEnum(NovelStatus).optional(),
   country: z.nativeEnum(Country).optional(),
-  tagSlugs: z.array(z.string()).max(20).optional(),
-  genreSlugs: z.array(z.string()).max(20).optional(),
-  excludeGenreSlugs: z.array(z.string()).max(20).optional(),
-  excludeTagSlugs: z.array(z.string()).max(20).optional(),
+  tagSlugs: slugArraySchema.optional(),
+  genreSlugs: slugArraySchema.optional(),
+  excludeGenreSlugs: slugArraySchema.optional(),
+  excludeTagSlugs: slugArraySchema.optional(),
   sort: z.enum(["latest", "score", "chapters"]).default("latest"),
 });
 

@@ -8,6 +8,7 @@ import {
 } from "@ratemyshelf/db";
 import { router, publicProcedure } from "../trpc";
 import { rateLimit } from "@/lib/rateLimit";
+import { slugArraySchema } from "@/lib/catalogFilters";
 
 export const searchInput = z.object({
   q: z.string().max(200).default(""),
@@ -17,10 +18,10 @@ export const searchInput = z.object({
     .object({
       status: z.nativeEnum(NovelStatus).optional(),
       country: z.nativeEnum(Country).optional(),
-      tags: z.array(z.string()).max(20).optional(),
-      excludeTags: z.array(z.string()).max(20).optional(),
-      genres: z.array(z.string()).max(20).optional(),
-      excludeGenres: z.array(z.string()).max(20).optional(),
+      tags: slugArraySchema.optional(),
+      excludeTags: slugArraySchema.optional(),
+      genres: slugArraySchema.optional(),
+      excludeGenres: slugArraySchema.optional(),
       minScore: z.number().min(0).max(100).optional(),
     })
     .optional(),
