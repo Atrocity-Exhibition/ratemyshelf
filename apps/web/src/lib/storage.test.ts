@@ -1,7 +1,21 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { uploadImage } from "./storage";
 
 describe("uploadImage validation", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("explains that production storage must be configured on Vercel", async () => {
+    vi.stubEnv("VERCEL", "1");
+
+    await expect(
+      uploadImage(Buffer.from("valid-fake-png-bytes"), "image/png", "avatars"),
+    ).rejects.toThrow(
+      "Image uploads are not configured for production. Configure Cloudflare R2.",
+    );
+  });
+
   it("rejects invalid MIME types", async () => {
     const fakeBuffer = Buffer.from("hello world");
     await expect(

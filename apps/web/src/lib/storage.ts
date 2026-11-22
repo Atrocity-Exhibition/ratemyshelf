@@ -17,9 +17,9 @@ const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 export function isR2Configured(): boolean {
   return Boolean(
     env.R2_ACCOUNT_ID &&
-      env.R2_ACCESS_KEY_ID &&
-      env.R2_SECRET_ACCESS_KEY &&
-      env.R2_BUCKET_NAME,
+    env.R2_ACCESS_KEY_ID &&
+    env.R2_SECRET_ACCESS_KEY &&
+    env.R2_BUCKET_NAME,
   );
 }
 
@@ -76,11 +76,20 @@ export async function uploadImage(
     };
   }
 
+  if (process.env.VERCEL === "1") {
+    throw new Error(
+      "Image uploads are not configured for production. Configure Cloudflare R2.",
+    );
+  }
+
   // Fallback to local storage for development/testing
   const uploadsDir = path.join(process.cwd(), "public", "uploads", folder);
   await fs.mkdir(uploadsDir, { recursive: true });
 
-  const filePath = path.join(uploadsDir, `${Date.now()}-${randomId}.${extension}`);
+  const filePath = path.join(
+    uploadsDir,
+    `${Date.now()}-${randomId}.${extension}`,
+  );
   await fs.writeFile(filePath, buffer);
 
   const localKey = `${folder}/${path.basename(filePath)}`;
