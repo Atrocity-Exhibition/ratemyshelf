@@ -27,4 +27,6 @@ COPY . .
 RUN pnpm --filter @ratemyshelf/db generate
 
 # The worker reads configuration from the process environment (no .env in the image).
-CMD ["pnpm", "--filter", "@ratemyshelf/web", "worker:prod"]
+# Use an entrypoint so a platform-level default start command cannot replace
+# the worker with `pnpm start` / `next start`.
+ENTRYPOINT ["sh", "-c", "exec pnpm --filter @ratemyshelf/web worker:prod"]
