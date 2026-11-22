@@ -2,6 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { ReadStatus } from "@prisma/client";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { lastChapterForStatus } from "@/lib/shelfProgress";
 
 const shelfInclude = {
   novel: {
@@ -43,6 +44,13 @@ export const shelvesRouter = router({
           },
         },
       });
+      const novel = await ctx.db.novel.findUnique({
+        where: { id: input.novelId },
+        select: { chapterCount: true },
+      });
+      const completedProgress = novel
+        ? lastChapterForStatus(input.status, novel.chapterCount)
+        : undefined;
 
       return ctx.db.shelfItem.upsert({
         where: {
@@ -56,7 +64,14 @@ export const shelvesRouter = router({
           ...(input.status === ReadStatus.READING && !existing?.startedAt
             ? { startedAt: now }
             : {}),
-          ...(input.status === ReadStatus.COMPLETED ? { completedAt: now } : {}),
+          ...(input.status === ReadStatus.COMPLETED
+            ? {
+                completedAt: now,
+                ...(completedProgress !== undefined
+                  ? { lastChapter: completedProgress }
+                  : {}),
+              }
+            : {}),
         },
         create: {
           userId: ctx.session.user.id,
@@ -64,6 +79,7 @@ export const shelvesRouter = router({
           status: input.status,
           startedAt: input.status === ReadStatus.READING ? now : undefined,
           completedAt: input.status === ReadStatus.COMPLETED ? now : undefined,
+          lastChapter: completedProgress,
         },
       });
     }),
