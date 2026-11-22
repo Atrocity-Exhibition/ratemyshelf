@@ -24,7 +24,7 @@ docker compose up -d                    # Postgres, Redis, Meilisearch
 pnpm install
 pnpm db:generate
 pnpm db:migrate                         # or: pnpm db:push for a throwaway database
-docker compose exec -T postgres psql -U trackwn -d trackwn \
+docker compose exec -T postgres psql -U ratemyshelf -d ratemyshelf \
   -f - < packages/db/prisma/migrations/001_init/extras.sql
 pnpm db:seed
 pnpm db:index                           # requires Meilisearch running

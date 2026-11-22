@@ -14,13 +14,13 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: trackwn
-          POSTGRES_PASSWORD: trackwn
-          POSTGRES_DB: trackwn
+          POSTGRES_USER: ratemyshelf
+          POSTGRES_PASSWORD: ratemyshelf
+          POSTGRES_DB: ratemyshelf
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U trackwn"
+          --health-cmd "pg_isready -U ratemyshelf"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
@@ -36,7 +36,7 @@ jobs:
           --health-retries 10
 
     env:
-      DATABASE_URL: postgresql://trackwn:trackwn@localhost:5432/trackwn
+      DATABASE_URL: postgresql://ratemyshelf:ratemyshelf@localhost:5432/ratemyshelf
       REDIS_URL: redis://localhost:6379
       MEILISEARCH_HOST: http://localhost:7700
       MEILISEARCH_API_KEY: masterKey
@@ -46,11 +46,11 @@ jobs:
       SKIP_ENV_VALIDATION: "1"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
           cache: pnpm
@@ -62,7 +62,7 @@ jobs:
       - run: pnpm db:migrate
 
       - name: Apply trigram indexes
-        run: PGPASSWORD=trackwn psql -h localhost -U trackwn -d trackwn -f packages/db/prisma/migrations/001_init/extras.sql
+        run: PGPASSWORD=ratemyshelf psql -h localhost -U ratemyshelf -d ratemyshelf -f packages/db/prisma/migrations/001_init/extras.sql
 
       - run: pnpm lint
 
