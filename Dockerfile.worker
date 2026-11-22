@@ -25,6 +25,9 @@ RUN pnpm install --frozen-lockfile --prod=false
 
 COPY . .
 RUN pnpm --filter @ratemyshelf/db generate
+# Keep the image runnable if the container platform applies the web app's
+# default `next start` command instead of the worker entrypoint.
+RUN SKIP_ENV_VALIDATION=1 pnpm --filter @ratemyshelf/web build
 
 # The worker reads configuration from the process environment (no .env in the image).
 # Use an entrypoint so a platform-level default start command cannot replace
