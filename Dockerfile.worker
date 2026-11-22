@@ -21,7 +21,7 @@ COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/config/package.json packages/config/
 COPY packages/db/package.json packages/db/
 COPY apps/web/package.json apps/web/
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --prod=false
 
 COPY . .
 RUN pnpm --filter @ratemyshelf/db generate
