@@ -6,7 +6,7 @@ import { sanitizeReviewBody } from "@/lib/sanitize";
 import { rateLimit } from "@/lib/rateLimit";
 import { reviewInput } from "@/lib/reviewValidation";
 
-async function assertCanReview(ctx: {
+export async function assertCanReview(ctx: {
   db: { user: { findUnique: Function } };
   session: { user: { id: string } };
 }) {

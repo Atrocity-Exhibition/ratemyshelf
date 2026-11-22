@@ -35,6 +35,15 @@ export async function recalculateNovelScore(novelId: string): Promise<void> {
   await cacheDel(`novel:${novelId}:meta`);
 }
 
+export async function recalculateThenSync(
+  novelId: string,
+  recalculate: (novelId: string) => Promise<void> = recalculateNovelScore,
+  scheduleSearchSync: (novelId: string) => Promise<unknown>,
+): Promise<void> {
+  await recalculate(novelId);
+  await scheduleSearchSync(novelId);
+}
+
 export async function registerScoreWorker(): Promise<void> {
   const boss = await getQueue();
   await boss.createQueue("recalculate-novel-score");
@@ -42,7 +51,11 @@ export async function registerScoreWorker(): Promise<void> {
     "recalculate-novel-score",
     async (jobs) => {
       for (const job of jobs) {
-        await recalculateNovelScore(job.data.novelId);
+        await recalculateThenSync(
+          job.data.novelId,
+          recalculateNovelScore,
+          (novelId) => boss.send("sync-search-index", { novelId }),
+        );
       }
     },
   );

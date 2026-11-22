@@ -6,8 +6,8 @@ import { registerTagVoteWorker } from "./resolveTagVotes";
 export async function registerJobs(): Promise<void> {
   // pg-boss creates queues and schedules inside transactions that take
   // ShareRowExclusiveLock on shared tables. Registering in parallel deadlocks.
-  await registerScoreWorker();
   await registerSearchWorker();
+  await registerScoreWorker();
   await registerAbuseWorker();
   await registerTagVoteWorker();
 }

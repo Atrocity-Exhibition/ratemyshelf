@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { calculateRatingAggregates } from "./ratingMath";
 import { reviewInput } from "./reviewValidation";
+import { assertCanReview } from "../server/routers/reviews";
 
 function maskSpoilerBody(
   body: string,
@@ -43,6 +44,19 @@ describe("review rules and validation", () => {
       scoreOverall: 42,
     });
     expect(result.success).toBe(true);
+  });
+
+  it("allows a newly-created authenticated non-banned account to submit immediately", async () => {
+    await expect(
+      assertCanReview({
+        db: {
+          user: {
+            findUnique: async () => ({ role: "USER", isBanned: false }),
+          },
+        },
+        session: { user: { id: "new-user" } },
+      }),
+    ).resolves.toBeUndefined();
   });
 
   it("rejects scores outside of their ranges", () => {
