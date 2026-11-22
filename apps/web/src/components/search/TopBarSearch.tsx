@@ -155,7 +155,11 @@ export function TopBarSearch() {
                       </div>
                     </div>
                     <div className="shrink-0">
-                      <ScoreBadge score={novel.bayesianScore} size="sm" />
+                      <ScoreBadge
+                        score={novel.bayesianScore}
+                        size="sm"
+                        scale={100}
+                      />
                     </div>
                   </Link>
                 </li>

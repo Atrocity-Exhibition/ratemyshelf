@@ -29,7 +29,8 @@ export async function generateMetadata({
 
   return {
     title: `${profile.user.username} - RateMyShelf`,
-    description: profile.user.bio ?? `${profile.user.username}'s profile on RateMyShelf`,
+    description:
+      profile.user.bio ?? `${profile.user.username}'s profile on RateMyShelf`,
   };
 }
 
@@ -82,8 +83,9 @@ export default async function UserPage({ params }: { params: Params }) {
           )}
 
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
-            Member since {new Date(profile.user.accountCreatedAt).toLocaleDateString()}{" "}
-            · {profile.user._count.reviews} public reviews ·{" "}
+            Member since{" "}
+            {new Date(profile.user.accountCreatedAt).toLocaleDateString()} ·{" "}
+            {profile.user._count.reviews} public reviews ·{" "}
             {profile.user._count.lists} public lists
           </p>
         </div>
@@ -106,7 +108,11 @@ export default async function UserPage({ params }: { params: Params }) {
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <ScoreBadge score={review.scoreOverall} size="sm" />
+                    <ScoreBadge
+                      score={review.scoreOverall}
+                      size="sm"
+                      scale={100}
+                    />
                     <Link
                       href={`/novels/${review.novel.slug}`}
                       className="text-sm font-semibold text-neutral-900 transition hover:underline dark:text-neutral-100"
@@ -118,7 +124,7 @@ export default async function UserPage({ params }: { params: Params }) {
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                {!review.containsSpoiler && (
+                {!review.containsSpoiler && review.body && (
                   <p className="line-clamp-3 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
                     {review.body.replace(/<[^>]*>/g, "").slice(0, 300)}
                   </p>
@@ -156,7 +162,8 @@ export default async function UserPage({ params }: { params: Params }) {
                   {list.title}
                 </Link>
                 <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                  {list._count.items} {list._count.items === 1 ? "novel" : "novels"}
+                  {list._count.items}{" "}
+                  {list._count.items === 1 ? "novel" : "novels"}
                 </p>
               </li>
             ))}

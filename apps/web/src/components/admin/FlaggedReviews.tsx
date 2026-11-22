@@ -5,7 +5,7 @@ import { trpc } from "@/trpc/client";
 type FlaggedReview = {
   id: string;
   abuseScore: number;
-  body: string;
+  body: string | null;
   user: { username: string };
   novel: { slug: string; title: string };
 };
@@ -39,7 +39,10 @@ export function FlaggedReviews({
   return (
     <ul className="space-y-3">
       {data.items.map((review) => (
-        <li key={review.id} className="space-y-2 rounded border border-slate-800 p-3">
+        <li
+          key={review.id}
+          className="space-y-2 rounded border border-slate-800 p-3"
+        >
           <div className="flex items-center justify-between text-sm">
             <span>
               {review.user.username} on{" "}
@@ -49,7 +52,9 @@ export function FlaggedReviews({
               abuse {review.abuseScore.toFixed(2)}
             </span>
           </div>
-          <p className="line-clamp-3 text-sm text-slate-400">{review.body}</p>
+          {review.body && (
+            <p className="line-clamp-3 text-sm text-slate-400">{review.body}</p>
+          )}
           <div className="flex gap-2">
             <button
               type="button"

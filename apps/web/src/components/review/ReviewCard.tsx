@@ -28,14 +28,18 @@ export function ReviewCard({
   const [notice, setNotice] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [showSpoiler, setShowSpoiler] = useState(false);
-  const [editBody, setEditBody] = useState(review.body);
+  const [editBody, setEditBody] = useState(review.body ?? "");
   const [editSpoiler, setEditSpoiler] = useState(review.containsSpoiler);
   const [editScores, setEditScores] = useState({
-    story: review.scoreStory,
-    characters: review.scoreCharacters,
-    worldBuilding: review.scoreWorldBuilding,
+    story: review.scoreStory ?? 5,
+    characters: review.scoreCharacters ?? 5,
+    worldBuilding: review.scoreWorldBuilding ?? 5,
     overall: review.scoreOverall,
-    translation: review.scoreTranslation ?? 5,
+  });
+  const [editDimensions, setEditDimensions] = useState({
+    story: review.scoreStory !== null,
+    characters: review.scoreCharacters !== null,
+    worldBuilding: review.scoreWorldBuilding !== null,
   });
 
   const voteHelpful = trpc.reviews.voteHelpful.useMutation({
@@ -79,7 +83,7 @@ export function ReviewCard({
     <article className="space-y-3.5 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs transition dark:border-neutral-800 dark:bg-[#16171c]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <ScoreBadge score={review.scoreOverall} size="sm" />
+          <ScoreBadge score={review.scoreOverall} size="sm" scale={100} />
           <Link
             href={`/users/${review.user.username}`}
             className="text-xs font-bold text-neutral-900 transition hover:underline dark:text-neutral-100"
@@ -105,11 +109,6 @@ export function ReviewCard({
             </span>
           );
         })}
-        {typeof review.scoreTranslation === "number" && (
-          <span className="rounded border border-neutral-200 bg-neutral-100 px-2 py-0.5 font-medium text-neutral-600 dark:border-neutral-800 dark:bg-neutral-800/80 dark:text-neutral-400">
-            Translation {review.scoreTranslation}/10
-          </span>
-        )}
         {review.status !== "VISIBLE" && (
           <span className="rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 font-medium text-amber-600 dark:text-amber-400">
             {review.status.replaceAll("_", " ").toLowerCase()}
@@ -117,7 +116,9 @@ export function ReviewCard({
         )}
       </div>
 
-      {review.containsSpoiler && !showSpoiler && review.body !== "[SPOILER HIDDEN]" ? (
+      {review.body === null ? null : review.containsSpoiler &&
+        !showSpoiler &&
+        review.body !== "[SPOILER HIDDEN]" ? (
         <div className="flex items-center justify-between rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
           <span>This review contains spoilers.</span>
           <button
@@ -132,7 +133,7 @@ export function ReviewCard({
         <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-700 dark:text-amber-300">
           Spoiler review hidden server-side.
         </p>
-      ) : (
+      ) : review.body !== null ? (
         <div className="space-y-2">
           {review.containsSpoiler && (
             <div className="flex items-center justify-between text-[11px] text-amber-600 dark:text-amber-400">
@@ -151,7 +152,7 @@ export function ReviewCard({
             dangerouslySetInnerHTML={{ __html: review.body }}
           />
         </div>
-      )}
+      ) : null}
 
       <div className="flex flex-wrap items-center gap-3 border-t border-neutral-100 pt-3 text-xs text-neutral-500 dark:border-neutral-800/80 dark:text-neutral-400">
         <button
@@ -211,45 +212,53 @@ export function ReviewCard({
           className="space-y-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900"
           onSubmit={(event) => {
             event.preventDefault();
-            if (editBody.trim().length < 150) return;
             update.mutate({
               id: review.id,
-              body: editBody,
-              containsSpoiler: editSpoiler,
-              scoreStory: editScores.story,
-              scoreCharacters: editScores.characters,
-              scoreWorldBuilding: editScores.worldBuilding,
+              body: editBody.trim() || null,
+              containsSpoiler: editBody.trim() ? editSpoiler : false,
+              scoreStory: editDimensions.story ? editScores.story : null,
+              scoreCharacters: editDimensions.characters
+                ? editScores.characters
+                : null,
+              scoreWorldBuilding: editDimensions.worldBuilding
+                ? editScores.worldBuilding
+                : null,
               scoreOverall: editScores.overall,
-              scoreTranslation:
-                review.scoreTranslation != null ? editScores.translation : undefined,
             });
           }}
         >
           <div className="grid gap-3 sm:grid-cols-2">
-            <ScoreSlider
-              label="Story"
-              value={editScores.story}
-              onChange={(value) =>
-                setEditScores((prev) => ({ ...prev, story: value }))
-              }
-            />
-            <ScoreSlider
-              label="Characters"
-              value={editScores.characters}
-              onChange={(value) =>
-                setEditScores((prev) => ({ ...prev, characters: value }))
-              }
-            />
-            <ScoreSlider
-              label="World building"
-              value={editScores.worldBuilding}
-              onChange={(value) =>
-                setEditScores((prev) => ({ ...prev, worldBuilding: value }))
-              }
-            />
+            {(["story", "characters", "worldBuilding"] as const).map((key) => (
+              <div key={key} className="space-y-2">
+                <label className="flex items-center gap-2 text-xs text-neutral-600 dark:text-neutral-400">
+                  <input
+                    type="checkbox"
+                    checked={editDimensions[key]}
+                    onChange={(event) =>
+                      setEditDimensions((prev) => ({
+                        ...prev,
+                        [key]: event.target.checked,
+                      }))
+                    }
+                  />
+                  Include {key === "worldBuilding" ? "world building" : key}
+                </label>
+                {editDimensions[key] && (
+                  <ScoreSlider
+                    label={key}
+                    value={editScores[key]}
+                    onChange={(value) =>
+                      setEditScores((prev) => ({ ...prev, [key]: value }))
+                    }
+                  />
+                )}
+              </div>
+            ))}
             <ScoreSlider
               label="Overall"
               value={editScores.overall}
+              min={0}
+              max={100}
               onChange={(value) =>
                 setEditScores((prev) => ({ ...prev, overall: value }))
               }
@@ -257,9 +266,6 @@ export function ReviewCard({
           </div>
 
           <textarea
-            required
-            minLength={150}
-            maxLength={10_000}
             rows={5}
             value={editBody}
             onChange={(event) => setEditBody(event.target.value)}
@@ -278,7 +284,7 @@ export function ReviewCard({
 
             <button
               type="submit"
-              disabled={update.isPending || editBody.trim().length < 150}
+              disabled={update.isPending}
               className="rounded bg-neutral-900 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-40 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
             >
               Save review

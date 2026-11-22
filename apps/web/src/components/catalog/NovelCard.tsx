@@ -52,7 +52,7 @@ export function NovelCard({ novel }: { novel: NovelCardData }) {
           </div>
 
           <div className="flex items-center justify-between pt-0.5">
-            <ScoreBadge score={score} size="sm" />
+            <ScoreBadge score={score} size="sm" scale={100} />
             <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
               {novel.scoreCache?.reviewCount ?? 0} reviews
             </span>

@@ -15,7 +15,6 @@ export function getScoreColor(score: number | null | undefined): {
     };
   }
 
-  // Normalize score if provided on a 1-10 or 1-100 scale
   const normalized = score > 10 ? score / 10 : score;
 
   if (normalized >= 7.0) {
@@ -62,7 +61,7 @@ export function ScoreBadge({
   const displayScore =
     score != null && Number.isFinite(score)
       ? scale === 100
-        ? Math.round(score > 10 ? score : score * 10)
+        ? Math.round(score)
         : score.toFixed(1)
       : "—";
 
@@ -99,7 +98,9 @@ export function ScoreBadge({
     <div
       className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 ${colors.bg} ${colors.border}`}
     >
-      <span className={`font-mono font-bold text-sm leading-none ${colors.text}`}>
+      <span
+        className={`font-mono font-bold text-sm leading-none ${colors.text}`}
+      >
         {displayScore}
       </span>
       {label && (

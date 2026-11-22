@@ -12,7 +12,7 @@ export function SearchResultCard({ hit }: { hit: SearchHit }) {
         >
           {hit.title}
         </Link>
-        <ScoreBadge score={hit.bayesianScore} size="sm" />
+        <ScoreBadge score={hit.bayesianScore} size="sm" scale={100} />
       </div>
 
       {hit.originalTitle && (

@@ -168,12 +168,12 @@ model Review {
   id                String       @id @default(cuid())
   novelId           String
   userId            String
-  body              String       @db.Text
+  body              String?      @db.Text
   containsSpoiler   Boolean      @default(false)
-  scoreStory        Int
+  scoreStory        Int?
   scoreTranslation  Int?
-  scoreCharacters   Int
-  scoreWorldBuilding Int
+  scoreCharacters   Int?
+  scoreWorldBuilding Int?
   scoreOverall      Int
   helpfulVotes      Int          @default(0)
   abuseScore        Float        @default(0.0)
@@ -205,10 +205,10 @@ model ReviewHelpfulVote {
 model NovelScoreCache {
   novelId          String   @id
   bayesianScore    Float
-  avgStory         Float
+  avgStory         Float?
   avgTranslation   Float?
-  avgCharacters    Float
-  avgWorldBuilding Float
+  avgCharacters    Float?
+  avgWorldBuilding Float?
   avgOverall       Float
   reviewCount      Int
   updatedAt        DateTime @updatedAt

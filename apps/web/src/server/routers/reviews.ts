@@ -5,41 +5,29 @@ import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { sanitizeReviewBody } from "@/lib/sanitize";
 import { rateLimit } from "@/lib/rateLimit";
 
-const MIN_ACCOUNT_AGE_DAYS = 7;
-
-const reviewBody = z.string().min(150).max(10_000);
+const reviewBody = z.string().nullable().optional();
 
 const reviewInput = z.object({
   novelId: z.string().min(1),
   body: reviewBody,
   containsSpoiler: z.boolean().default(false),
-  scoreStory: z.number().int().min(1).max(10),
-  scoreTranslation: z.number().int().min(1).max(10).optional(),
-  scoreCharacters: z.number().int().min(1).max(10),
-  scoreWorldBuilding: z.number().int().min(1).max(10),
-  scoreOverall: z.number().int().min(1).max(10),
+  scoreStory: z.number().int().min(1).max(10).nullable().optional(),
+  scoreCharacters: z.number().int().min(1).max(10).nullable().optional(),
+  scoreWorldBuilding: z.number().int().min(1).max(10).nullable().optional(),
+  scoreOverall: z.number().int().min(0).max(100),
 });
 
-async function assertCanReview(
-  ctx: { db: { user: { findUnique: Function } }; session: { user: { id: string } } },
-) {
+async function assertCanReview(ctx: {
+  db: { user: { findUnique: Function } };
+  session: { user: { id: string } };
+}) {
   const user = (await ctx.db.user.findUnique({
     where: { id: ctx.session.user.id },
-    select: { accountCreatedAt: true, role: true, isBanned: true },
-  })) as { accountCreatedAt: Date; role: Role; isBanned: boolean } | null;
+    select: { role: true, isBanned: true },
+  })) as { role: Role; isBanned: boolean } | null;
 
   if (!user || user.isBanned) {
     throw new TRPCError({ code: "FORBIDDEN", message: "Account unavailable" });
-  }
-
-  if (user.role === Role.MODERATOR || user.role === Role.ADMIN) return;
-
-  const ageDays = (Date.now() - user.accountCreatedAt.getTime()) / 86_400_000;
-  if (ageDays < MIN_ACCOUNT_AGE_DAYS) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: `Reviews open after ${MIN_ACCOUNT_AGE_DAYS} days of account age`,
-    });
   }
 }
 
@@ -63,7 +51,13 @@ export const reviewsRouter = router({
           { status: ReviewStatus.VISIBLE },
           ...(viewerId ? [{ userId: viewerId }] : []),
           ...(viewerRole === Role.MODERATOR || viewerRole === Role.ADMIN
-            ? [{ status: { in: [ReviewStatus.FLAGGED, ReviewStatus.HIDDEN_BY_MOD] } }]
+            ? [
+                {
+                  status: {
+                    in: [ReviewStatus.FLAGGED, ReviewStatus.HIDDEN_BY_MOD],
+                  },
+                },
+              ]
             : []),
         ],
       };
@@ -107,57 +101,64 @@ export const reviewsRouter = router({
       };
     }),
 
-  submit: protectedProcedure.input(reviewInput).mutation(async ({ ctx, input }) => {
-    await assertCanReview(ctx);
+  submit: protectedProcedure
+    .input(reviewInput)
+    .mutation(async ({ ctx, input }) => {
+      await assertCanReview(ctx);
 
-    const limiter = await rateLimit({
-      key: `ratelimit:review:${ctx.session.user.id}`,
-      limit: 5,
-      windowSeconds: 60 * 60,
-    });
-    if (!limiter.allowed) {
-      throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-    }
+      const limiter = await rateLimit({
+        key: `ratelimit:review:${ctx.session.user.id}`,
+        limit: 5,
+        windowSeconds: 60 * 60,
+      });
+      if (!limiter.allowed) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
+      }
 
-    const existing = await ctx.db.review.findUnique({
-      where: {
-        novelId_userId: {
+      const existing = await ctx.db.review.findUnique({
+        where: {
+          novelId_userId: {
+            novelId: input.novelId,
+            userId: ctx.session.user.id,
+          },
+        },
+        select: { id: true },
+      });
+      if (existing) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "You already reviewed this novel",
+        });
+      }
+
+      const body = input.body?.trim() ? sanitizeReviewBody(input.body) : null;
+      const review = await ctx.db.review.create({
+        data: {
           novelId: input.novelId,
           userId: ctx.session.user.id,
+          body,
+          containsSpoiler: body ? input.containsSpoiler : false,
+          scoreStory: input.scoreStory,
+          scoreCharacters: input.scoreCharacters,
+          scoreWorldBuilding: input.scoreWorldBuilding,
+          scoreOverall: input.scoreOverall,
         },
-      },
-      select: { id: true },
-    });
-    if (existing) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: "You already reviewed this novel",
+        include: {
+          user: { select: { id: true, username: true, avatarUrl: true } },
+        },
       });
-    }
 
-    const review = await ctx.db.review.create({
-      data: {
-        novelId: input.novelId,
-        userId: ctx.session.user.id,
-        body: sanitizeReviewBody(input.body),
-        containsSpoiler: input.containsSpoiler,
-        scoreStory: input.scoreStory,
-        scoreTranslation: input.scoreTranslation,
-        scoreCharacters: input.scoreCharacters,
-        scoreWorldBuilding: input.scoreWorldBuilding,
-        scoreOverall: input.scoreOverall,
-      },
-      include: {
-        user: { select: { id: true, username: true, avatarUrl: true } },
-      },
-    });
-
-    await ctx.enqueue("recalculate-novel-score", { novelId: input.novelId });
-    return review;
-  }),
+      await ctx.enqueue("recalculate-novel-score", { novelId: input.novelId });
+      return review;
+    }),
 
   update: protectedProcedure
-    .input(reviewInput.omit({ novelId: true }).partial().extend({ id: z.string().min(1) }))
+    .input(
+      reviewInput
+        .omit({ novelId: true })
+        .partial()
+        .extend({ id: z.string().min(1) }),
+    )
     .mutation(async ({ ctx, input }) => {
       const existing = await ctx.db.review.findUnique({
         where: { id: input.id },
@@ -168,12 +169,23 @@ export const reviewsRouter = router({
         throw new TRPCError({ code: "FORBIDDEN" });
       }
 
-      const { id, body, ...rest } = input;
+      const { id, body, containsSpoiler, ...rest } = input;
+      const bodyValue =
+        body === undefined
+          ? undefined
+          : body?.trim()
+            ? sanitizeReviewBody(body)
+            : null;
       const review = await ctx.db.review.update({
         where: { id },
         data: {
           ...rest,
-          ...(body ? { body: sanitizeReviewBody(body) } : {}),
+          ...(body !== undefined ? { body: bodyValue } : {}),
+          ...(containsSpoiler !== undefined
+            ? { containsSpoiler: bodyValue ? containsSpoiler : false }
+            : body !== undefined
+              ? { containsSpoiler: false }
+              : {}),
         },
       });
 
@@ -202,7 +214,9 @@ export const reviewsRouter = router({
       const review = await ctx.db.review.update({
         where: { id: input.id },
         data: {
-          status: isMod ? ReviewStatus.HIDDEN_BY_MOD : ReviewStatus.HIDDEN_BY_USER,
+          status: isMod
+            ? ReviewStatus.HIDDEN_BY_MOD
+            : ReviewStatus.HIDDEN_BY_USER,
         },
       });
 

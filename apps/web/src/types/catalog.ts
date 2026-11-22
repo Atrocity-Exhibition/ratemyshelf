@@ -10,10 +10,10 @@ export type NovelCardData = {
   scoreCache: {
     bayesianScore: number;
     reviewCount: number;
-    avgStory: number;
+    avgStory: number | null;
     avgTranslation: number | null;
-    avgCharacters: number;
-    avgWorldBuilding: number;
+    avgCharacters: number | null;
+    avgWorldBuilding: number | null;
     avgOverall: number;
   } | null;
   tags: { tag: { name: string; slug: string } }[];
@@ -30,12 +30,12 @@ export type ReviewData = {
   id: string;
   userId: string;
   status: string;
-  body: string;
+  body: string | null;
   containsSpoiler: boolean;
-  scoreStory: number;
+  scoreStory: number | null;
   scoreTranslation: number | null;
-  scoreCharacters: number;
-  scoreWorldBuilding: number;
+  scoreCharacters: number | null;
+  scoreWorldBuilding: number | null;
   scoreOverall: number;
   helpfulVotes: number;
   createdAt: string | Date;
