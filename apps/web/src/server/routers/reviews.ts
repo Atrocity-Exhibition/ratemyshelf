@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { Role, ReviewStatus } from "@prisma/client";
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { sanitizeReviewBody } from "@/lib/sanitize";
-import { rateLimit } from "@/lib/rateLimit";
+import { rateLimit, releaseRateLimit } from "@/lib/rateLimit";
 import { reviewInput } from "@/lib/reviewValidation";
 
 export async function assertCanReview(ctx: {
@@ -109,15 +109,6 @@ export const reviewsRouter = router({
     .mutation(async ({ ctx, input }) => {
       await assertCanReview(ctx);
 
-      const limiter = await rateLimit({
-        key: `ratelimit:review:${ctx.session.user.id}`,
-        limit: 5,
-        windowSeconds: 60 * 60,
-      });
-      if (!limiter.allowed) {
-        throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      }
-
       const existing = await ctx.db.review.findUnique({
         where: {
           novelId_userId: {
@@ -134,24 +125,51 @@ export const reviewsRouter = router({
         });
       }
 
-      const body = input.body?.trim() ? sanitizeReviewBody(input.body) : null;
-      const review = await ctx.db.review.create({
-        data: {
-          novelId: input.novelId,
-          userId: ctx.session.user.id,
-          body,
-          containsSpoiler: body ? input.containsSpoiler : false,
-          scoreStory: input.scoreStory,
-          scoreCharacters: input.scoreCharacters,
-          scoreWorldBuilding: input.scoreWorldBuilding,
-          scoreOverall: input.scoreOverall,
-        },
-        include: {
-          user: { select: { id: true, username: true, avatarUrl: true } },
-        },
-      });
+      const isAdmin = ctx.session.user.role === Role.ADMIN;
+      const limiter = isAdmin
+        ? null
+        : await rateLimit({
+            key: `ratelimit:review:${ctx.session.user.id}`,
+            limit: 20,
+            windowSeconds: 60 * 60,
+          });
+      if (limiter && !limiter.allowed) {
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message:
+            "You have reached the limit of 20 new ratings per hour. Please try again later.",
+        });
+      }
 
-      await ctx.enqueue("recalculate-novel-score", { novelId: input.novelId });
+      let review;
+      try {
+        const body = input.body?.trim() ? sanitizeReviewBody(input.body) : null;
+        review = await ctx.db.review.create({
+          data: {
+            novelId: input.novelId,
+            userId: ctx.session.user.id,
+            body,
+            containsSpoiler: body ? input.containsSpoiler : false,
+            scoreStory: input.scoreStory,
+            scoreCharacters: input.scoreCharacters,
+            scoreWorldBuilding: input.scoreWorldBuilding,
+            scoreOverall: input.scoreOverall,
+          },
+          include: {
+            user: { select: { id: true, username: true, avatarUrl: true } },
+          },
+        });
+      } catch (error) {
+        await releaseRateLimit({
+          key: `ratelimit:review:${ctx.session.user.id}`,
+          member: limiter?.member,
+        });
+        throw error;
+      }
+
+      await ctx.enqueue("recalculate-novel-score", {
+        novelId: input.novelId,
+      });
       return review;
     }),
 
