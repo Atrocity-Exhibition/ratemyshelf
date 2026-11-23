@@ -19,6 +19,7 @@ export type NovelSearchDocument = {
   id: string;
   slug: string;
   title: string;
+  author: string | null;
   originalTitle: string | null;
   coverImageUrl: string | null;
   aliases: string[];
@@ -50,6 +51,7 @@ export function toSearchDocument(
     id: novel.id,
     slug: novel.slug,
     title: novel.title,
+    author: novel.author,
     originalTitle: novel.originalTitle,
     coverImageUrl: novel.coverImageUrl,
     aliases: novel.aliases.map((alias) => alias.alias),
@@ -74,6 +76,7 @@ export async function configureNovelIndex(): Promise<void> {
   await index.updateSettings({
     searchableAttributes: [
       "title",
+      "author",
       "originalTitle",
       "aliases",
       "synopsis",

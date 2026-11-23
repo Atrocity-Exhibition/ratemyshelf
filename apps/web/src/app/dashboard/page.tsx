@@ -3,7 +3,6 @@ import { auth } from "@/auth";
 import { getApi } from "@/trpc/server";
 import { ShelfTabs } from "@/components/shelf/ShelfTabs";
 import { MyLists } from "@/components/lists/MyLists";
-import { ProfileSettings } from "@/components/user/ProfileSettings";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +26,6 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <ProfileSettings initialUser={user} />
       <ShelfTabs items={shelf as never} />
       <MyLists initialLists={lists as never} />
     </div>

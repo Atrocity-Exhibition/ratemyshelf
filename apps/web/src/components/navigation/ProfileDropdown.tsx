@@ -14,6 +14,7 @@ import {
   LogIn,
   UserPlus,
   ShieldAlert,
+  Tags,
 } from "lucide-react";
 import { trpc } from "@/trpc/client";
 
@@ -25,6 +26,9 @@ export function ProfileDropdown() {
 
   const isAuthenticated = status === "authenticated" && Boolean(session?.user);
   const user = session?.user;
+  const { data: currentUser } = trpc.auth.me.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
 
   const logoutMutation = trpc.auth.logout.useMutation({
     onSettled: async () => {
@@ -55,10 +59,10 @@ export function ProfileDropdown() {
         className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-neutral-300 bg-neutral-100 transition hover:border-neutral-500 hover:ring-2 hover:ring-neutral-400/20 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-500"
         aria-label="User menu"
       >
-        {user?.image ? (
+        {(currentUser?.avatarUrl ?? user?.image) ? (
           <Image
-            src={user.image}
-            alt={user.name ?? "User"}
+            src={currentUser?.avatarUrl ?? user?.image ?? ""}
+            alt={user?.name ?? "User"}
             width={36}
             height={36}
             className="h-full w-full object-cover"
@@ -109,6 +113,15 @@ export function ProfileDropdown() {
                 </Link>
               </>
             ) : null}
+
+            <Link
+              href="/genres-tags"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center gap-2.5 px-3 py-2 text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800"
+            >
+              <Tags className="h-3.5 w-3.5 text-[#0eb23a]" />
+              Genres &amp; Tags
+            </Link>
 
             <Link
               href="/novels?sort=score"

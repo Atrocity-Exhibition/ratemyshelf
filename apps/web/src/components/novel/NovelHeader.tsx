@@ -32,6 +32,11 @@ export function NovelHeader({ novel }: { novel: NovelDetailData }) {
           <h1 className="text-2xl font-extrabold tracking-tight text-neutral-900 sm:text-3xl dark:text-neutral-100">
             {novel.title}
           </h1>
+          {novel.author && (
+            <p className="mt-1 text-sm font-medium text-neutral-600 dark:text-neutral-300">
+              by {novel.author}
+            </p>
+          )}
           {novel.originalTitle && (
             <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
               {novel.originalTitle}

@@ -62,6 +62,7 @@ export default async function NovelsPage({
         id: hit.id,
         slug: hit.slug,
         title: hit.title,
+        author: hit.author ?? null,
         originalTitle: hit.originalTitle ?? undefined,
         status: hit.status as NovelStatus,
         countryOfOrigin: hit.countryOfOrigin as Country,

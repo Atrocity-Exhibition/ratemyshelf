@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getApi } from "@/trpc/server";
+import { auth } from "@/auth";
+import { ProfileSettings } from "@/components/user/ProfileSettings";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 
 export const dynamic = "force-dynamic";
@@ -43,6 +45,8 @@ export default async function UserPage({ params }: { params: Params }) {
     profile.user.role === "ADMIN" ||
     profile.user.role === "MODERATOR" ||
     profile.user.role === "CONTRIBUTOR";
+  const session = await auth();
+  const isOwnProfile = session?.user?.name === profile.user.username;
 
   return (
     <div className="space-y-8">
@@ -90,6 +94,15 @@ export default async function UserPage({ params }: { params: Params }) {
           </p>
         </div>
       </header>
+
+      {isOwnProfile && (
+        <ProfileSettings
+          initialUser={{
+            ...profile.user,
+            email: session?.user?.email ?? "",
+          }}
+        />
+      )}
 
       <section className="space-y-4">
         <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">

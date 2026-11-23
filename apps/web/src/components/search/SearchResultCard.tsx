@@ -6,12 +6,19 @@ export function SearchResultCard({ hit }: { hit: SearchHit }) {
   return (
     <article className="space-y-2 rounded-xl border border-neutral-200 bg-white p-4 shadow-xs transition dark:border-neutral-800 dark:bg-[#16171c]">
       <div className="flex items-center justify-between gap-3">
-        <Link
-          href={`/novels/${hit.slug}`}
-          className="font-semibold text-neutral-900 transition hover:underline dark:text-neutral-100"
-        >
-          {hit.title}
-        </Link>
+        <div className="min-w-0">
+          <Link
+            href={`/novels/${hit.slug}`}
+            className="font-semibold text-neutral-900 transition hover:underline dark:text-neutral-100"
+          >
+            {hit.title}
+          </Link>
+          {hit.author && (
+            <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+              by {hit.author}
+            </p>
+          )}
+        </div>
         <ScoreBadge score={hit.bayesianScore} size="sm" scale={100} />
       </div>
 

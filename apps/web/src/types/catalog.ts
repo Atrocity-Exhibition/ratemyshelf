@@ -2,6 +2,7 @@ export type NovelCardData = {
   id: string;
   slug: string;
   title: string;
+  author: string | null;
   originalTitle: string | null;
   coverImageUrl: string | null;
   status: string;
@@ -53,6 +54,7 @@ export type SearchHit = {
   id: string;
   slug: string;
   title: string;
+  author?: string | null;
   originalTitle?: string | null;
   coverImageUrl?: string | null;
   aliases?: string[];

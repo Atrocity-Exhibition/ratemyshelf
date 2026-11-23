@@ -10,7 +10,7 @@ export function NovelGrid({
 }) {
   if (novels.length === 0) {
     return (
-      <p className="rounded-xl border border-dashed border-slate-800/80 bg-slate-950/30 p-8 text-center text-slate-500">
+      <p className="rounded-xl border border-dashed border-neutral-300 bg-white p-8 text-center text-sm text-neutral-500 dark:border-neutral-800 dark:bg-neutral-900/40 dark:text-neutral-400">
         {emptyMessage}
       </p>
     );

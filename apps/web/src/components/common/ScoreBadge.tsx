@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 export function getScoreColor(
   score: number | null | undefined,
   scale: 10 | 100 = 10,
@@ -11,7 +9,7 @@ export function getScoreColor(
 } {
   if (score == null || !Number.isFinite(score)) {
     return {
-      bg: "bg-neutral-100 dark:bg-neutral-800/60",
+      bg: "bg-transparent",
       text: "text-neutral-500 dark:text-neutral-400",
       border: "border-neutral-200 dark:border-neutral-700",
       solidBg: "bg-neutral-500",
@@ -23,30 +21,40 @@ export function getScoreColor(
   if (normalized >= 7.0) {
     // High / Universal Acclaim (AOTY Green)
     return {
-      bg: "bg-emerald-500/15 dark:bg-emerald-500/20",
-      text: "text-emerald-700 dark:text-emerald-400",
-      border: "border-emerald-500/30",
-      solidBg: "bg-emerald-600 dark:bg-emerald-500",
+      bg: "bg-transparent",
+      text: "text-[#0eb23a]",
+      border: "border-[#0eb23a]",
+      solidBg: "bg-[#0eb23a]",
     };
   }
 
   if (normalized >= 5.0) {
     // Mixed (AOTY Yellow/Amber)
     return {
-      bg: "bg-amber-500/15 dark:bg-amber-500/20",
-      text: "text-amber-700 dark:text-amber-400",
-      border: "border-amber-500/30",
-      solidBg: "bg-amber-600 dark:bg-amber-500",
+      bg: "bg-transparent",
+      text: "text-[#d66d11]",
+      border: "border-[#d66d11]",
+      solidBg: "bg-[#d66d11]",
     };
   }
 
   // Low (AOTY Red)
   return {
-    bg: "bg-rose-500/15 dark:bg-rose-500/20",
-    text: "text-rose-700 dark:text-rose-400",
-    border: "border-rose-500/30",
-    solidBg: "bg-rose-600 dark:bg-rose-500",
+    bg: "bg-transparent",
+    text: "text-[#db3604]",
+    border: "border-[#db3604]",
+    solidBg: "bg-[#db3604]",
   };
+}
+
+function scoreLabel(
+  score: number | null | undefined,
+  displayScore: string,
+  scale: 10 | 100,
+) {
+  return score != null && Number.isFinite(score)
+    ? `Score ${displayScore} out of ${scale}`
+    : "Not rated yet";
 }
 
 export function ScoreBadge({
@@ -54,24 +62,32 @@ export function ScoreBadge({
   label = "SCORE",
   size = "md",
   scale = 10,
+  overlay = false,
 }: {
   score: number | null | undefined;
   label?: string;
   size?: "sm" | "md" | "lg";
   scale?: 10 | 100;
+  /** Dark translucent backing for use on top of cover images. */
+  overlay?: boolean;
 }) {
   const colors = getScoreColor(score, scale);
-  const displayScore =
+  const displayScore: string =
     score != null && Number.isFinite(score)
       ? scale === 100
-        ? Math.round(score)
+        ? String(Math.round(score))
         : score.toFixed(1)
       : "—";
+  const surface = overlay ? "bg-black/55 backdrop-blur-sm" : colors.bg;
+  const accessibleLabel = scoreLabel(score, displayScore, scale);
 
   if (size === "sm") {
     return (
       <span
-        className={`inline-flex items-center justify-center font-bold font-mono px-1.5 py-0.5 rounded text-xs border ${colors.bg} ${colors.text} ${colors.border}`}
+        role="img"
+        aria-label={accessibleLabel}
+        title={accessibleLabel}
+        className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 font-sans text-xs font-bold ${surface} ${colors.text} ${colors.border}`}
       >
         {displayScore}
       </span>
@@ -80,11 +96,12 @@ export function ScoreBadge({
 
   if (size === "lg") {
     return (
-      <div
-        className={`flex flex-col items-center justify-center rounded-lg border px-4 py-2.5 min-w-[76px] ${colors.bg} ${colors.border}`}
-      >
+      <div className="flex min-w-[84px] flex-col items-center justify-center">
         <span
-          className={`text-3xl font-extrabold font-mono leading-none tracking-tight ${colors.text}`}
+          role="img"
+          aria-label={accessibleLabel}
+          title={accessibleLabel}
+          className={`flex h-[84px] w-[84px] items-center justify-center rounded-full border-[3px] font-sans text-3xl font-extrabold leading-none tracking-tight ${surface} ${colors.text} ${colors.border}`}
         >
           {displayScore}
         </span>
@@ -98,11 +115,12 @@ export function ScoreBadge({
   }
 
   return (
-    <div
-      className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 ${colors.bg} ${colors.border}`}
-    >
+    <div className="inline-flex items-center gap-1.5">
       <span
-        className={`font-mono font-bold text-sm leading-none ${colors.text}`}
+        role="img"
+        aria-label={accessibleLabel}
+        title={accessibleLabel}
+        className={`flex h-12 w-12 items-center justify-center rounded-full border-2 font-sans text-sm font-bold leading-none ${surface} ${colors.text} ${colors.border}`}
       >
         {displayScore}
       </span>

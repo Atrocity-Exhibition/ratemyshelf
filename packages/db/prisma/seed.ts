@@ -4,6 +4,8 @@ import {
   NovelStatus,
   Country,
 } from "@prisma/client";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 import { CATALOG_CANDIDATES } from "./catalogCandidates";
 
 const prisma = new PrismaClient();
@@ -81,6 +83,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "solo-leveling",
     title: "Solo Leveling",
+    author: "Chugong",
     originalTitle: "나 혼자만 레벨업",
     synopsis:
       "In a world where hunters battle monsters, the weakest hunter Sung Jin-Woo gains a system that lets him level up without limit.",
@@ -94,6 +97,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "omniscient-readers-viewpoint",
     title: "Omniscient Reader's Viewpoint",
+    author: "Sing-Shong",
     originalTitle: "전지적 독자 시점",
     synopsis:
       "Kim Dokja is the only reader of an obscure web novel that suddenly manifests into gruesome reality. Armed with knowledge of the end, he sets out to change the plot.",
@@ -112,6 +116,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-novels-extra",
     title: "The Novel's Extra",
+    author: "Jee Gab Song",
     originalTitle: "소설 속 엑스트라",
     synopsis:
       "The author of a modern-fantasy novel is pulled into his own unfinished story as an insignificant extra cadet with a gun in a world of swords and magic.",
@@ -125,6 +130,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "trash-of-the-counts-family",
     title: "Trash of the Count's Family",
+    author: "Yoo Ryeo Han",
     originalTitle: "백작가의 망나니가 되었다",
     synopsis:
       "Kim Rok Soo wakes as Cale Henituse, the notorious drunken trash of a wealthy noble household, right before the birth of a hero threatens his peaceful slacker life.",
@@ -138,6 +144,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-second-coming-of-gluttony",
     title: "The Second Coming of Gluttony",
+    author: "Ro Yu-jin",
     originalTitle: "탐식의 재림",
     synopsis:
       "A broken gambler is granted a second chance in the parallel world of Paradise, where his feelings of regret and hunger for redemption drive him to the pinnacle.",
@@ -151,6 +158,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "overgeared",
     title: "Overgeared",
+    author: "Park Saenal",
     originalTitle: "템빨",
     synopsis:
       "Shin Youngwoo, known in the VR game Satisfy as Grid, stumbles upon the Legendary Blacksmith's legacy and turns overwhelming equipment advantages into glory.",
@@ -164,6 +172,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "return-of-the-mount-hua-sect",
     title: "Return of the Mount Hua Sect",
+    author: "Biga",
     originalTitle: "화산귀환",
     synopsis:
       "Chung Myung, the Plum Blossom Sword Saint who slew the Heavenly Demon, awakens a hundred years later as a child to discover his proud sect reduced to ruin.",
@@ -177,6 +186,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-s-classes-that-i-raised",
     title: "The S-Classes That I Raised",
+    author: "Geunseo",
     originalTitle: "내가 키운 S급들",
     synopsis:
       "Han Yoojin regresses after watching his prodigy younger brother die to protect him, gaining caretaker skills tailored for nurturing S-rank awakeners.",
@@ -190,6 +200,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "second-life-ranker",
     title: "Second Life Ranker",
+    author: "Sadoyeon",
     originalTitle: "두 번 사는 랭커",
     synopsis:
       "Yeon-woo learns his missing twin brother was betrayed inside the Obelisk of the Sun God. Taking his brother's pocket watch, he climbs the tower for vengeance.",
@@ -203,6 +214,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "worthless-regression",
     title: "Worthless Regression",
+    author: "Mogma",
     originalTitle: "양아치 회귀",
     synopsis:
       "A talentless mercenary is sent thirteen years into the past. Without a system or special heritage, he relies on stubborn, agonizing effort to change his fate.",
@@ -216,6 +228,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "reformation-of-the-deadbeat-noble",
     title: "Reformation of the Deadbeat Noble",
+    author: "idengbyeol",
     originalTitle: "어느 날 갑자기 망나니가 되었다",
     synopsis:
       "A young noble paralyzed by childhood trauma dreams of a nameless swordsman who swung his blade for decades, inspiring him to pick up a sword.",
@@ -229,6 +242,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "villains-are-destined-to-die",
     title: "Villains Are Destined to Die",
+    author: "Gwon Gyeoeul",
     originalTitle: "악역의 엔딩은 죽음뿐",
     synopsis:
       "A university student wakes up inside the hard-mode otome game as the hated villainess Penelope Eckart, where every wrong choice leads to instant death.",
@@ -244,6 +258,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "lord-of-the-mysteries",
     title: "Lord of the Mysteries",
+    author: "Cuttlefish That Loves Diving",
     originalTitle: "诡秘之主",
     synopsis:
       "Zhou Mingrui transmigrates into a Victorian-era steampunk world of potions, tarot clubs, eldritch horrors, and twenty-two Beyonder pathways.",
@@ -257,6 +272,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "reverend-insanity",
     title: "Reverend Insanity",
+    author: "Gu Zhen Ren",
     originalTitle: "蛊真人",
     synopsis:
       "Fang Yuan, an unrepentant demonic cultivator, uses the Spring Autumn Cicada to travel 500 years back into his youth, scheming through a cruel world of Gu cultivation.",
@@ -270,6 +286,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "i-shall-seal-the-heavens",
     title: "I Shall Seal the Heavens",
+    author: "Er Gen",
     originalTitle: "我欲封天",
     synopsis:
       "Failed scholar Meng Hao is dragged into the cultivation world of the Reliance Sect, forging his path by weaponizing demonic heritage and sheer debt collection.",
@@ -283,6 +300,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "renegade-immortal",
     title: "Renegade Immortal",
+    author: "Er Gen",
     originalTitle: "仙逆",
     synopsis:
       "Wang Lin, an ordinary youth deemed untalented by immortal sects, finds a mysterious bead and embarks on a merciless journey of life and death.",
@@ -296,6 +314,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "cultivation-chat-group",
     title: "Cultivation Chat Group",
+    author: "Legend of the Paladin",
     originalTitle: "修真聊天群",
     synopsis:
       "Song Shuhang is accidentally invited into a QQ chat group full of chuunibyou roleplayers who claim to be Daoists, only to discover every recipe and spell is real.",
@@ -309,6 +328,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-legendary-mechanic",
     title: "The Legendary Mechanic",
+    author: "Chocolion",
     originalTitle: "超神机械师",
     synopsis:
       "Han Xiao transmigrates into the sci-fi MMO Galaxy as an NPC before the beta test begins, arming himself with advanced mechanical engineering.",
@@ -322,6 +342,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "release-that-witch",
     title: "Release That Witch",
+    author: "Er Mu",
     originalTitle: "放开那个女巫",
     synopsis:
       "A modern mechanical engineer awakens as Prince Roland in an early-industrial medieval kingdom where persecuted witches possess industrial-scale magical powers.",
@@ -335,6 +356,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "my-house-of-horrors",
     title: "My House of Horrors",
+    author: "I Fix Air-Conditioner",
     originalTitle: "我有一座恐怖屋",
     synopsis:
       "Chen Ge inherits his vanished parents' failing haunted house attraction, finding a black phone that unlocks daily supernatural missions inside urban legends.",
@@ -348,6 +370,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "a-will-eternal",
     title: "A Will Eternal",
+    author: "Er Gen",
     originalTitle: "一念永恒",
     synopsis:
       "Terrified of death, Bai Xiaochun is driven by a singular obsession: achieving immortality at all costs, resulting in comedic chaos across orthodox sects.",
@@ -361,6 +384,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "beyond-the-timescape",
     title: "Beyond the Timescape",
+    author: "Er Gen",
     originalTitle: "光阴之外",
     synopsis:
       "A divine face opens its eyes in the sky and covers the continent in mutant-tainted purple fog. Orphan Xu Qing must scavenge and kill simply to survive another day.",
@@ -376,6 +400,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "mother-of-learning",
     title: "Mother of Learning",
+    author: "nobody103",
     synopsis:
       "Zorian Kazinski is a cynical magic academy student trapped in a repeating month-long time loop before an invasion, forcing him to grow from average mage to master.",
     status: NovelStatus.COMPLETED,
@@ -388,6 +413,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "shadow-slave",
     title: "Shadow Slave",
+    author: "Guiltythree",
     synopsis:
       "Sunny is an impoverished slum orphan infected by the Nightmare Spell. Transported to a ruin-strewn dream world, he must survive godless terrors using deceit and shadow magic.",
     status: NovelStatus.ONGOING,
@@ -406,6 +432,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-beginning-after-the-end",
     title: "The Beginning After the End",
+    author: "TurtleMe",
     synopsis:
       "King Grey reincarnates with his past memories intact into a vibrant continent of magic and mana beasts, hoping for a warm life far away from political loneliness.",
     status: NovelStatus.ONGOING,
@@ -423,6 +450,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "beware-of-chicken",
     title: "Beware of Chicken",
+    author: "Casualfarmer",
     synopsis:
       "A transmigrated soul flees the violent, cutthroat cultivation world to start an honest farm in the mortal territory, inadvertently raising spiritually awakened barnyard animals.",
     status: NovelStatus.ONGOING,
@@ -435,6 +463,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-perfect-run",
     title: "The Perfect Run",
+    author: "Void Herald",
     synopsis:
       "Ryan 'Quicksave' Romano has a power: he can create a save point in time and reload upon death. He arrives in dystopian New Rome determined to achieve the flawless golden ending.",
     status: NovelStatus.COMPLETED,
@@ -447,6 +476,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "dungeon-crawler-carl",
     title: "Dungeon Crawler Carl",
+    author: "Matt Dinniman",
     synopsis:
       "Earth is collapsed into an eighteen-floor televised alien dungeon crawl. Carl and his ex-girlfriend's prize Persian cat, Princess Donut, must survive the galaxy's cruelest reality show.",
     status: NovelStatus.ONGOING,
@@ -459,6 +489,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-primal-hunter",
     title: "The Primal Hunter",
+    author: "Zogarth",
     synopsis:
       "When the multiverse initiates Earth into the System, quiet office worker Jake discovers an innate talent for the bow and an insatiable thrill for tracking apex beasts.",
     status: NovelStatus.ONGOING,
@@ -471,6 +502,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "defiance-of-the-fall",
     title: "Defiance of the Fall",
+    author: "TheFirstDefier",
     synopsis:
       "An unexpected planetary merger isolates Zac on an island overrun by demonic incursions, armed only with a rusty hatchet and an unrelenting will to endure.",
     status: NovelStatus.ONGOING,
@@ -483,6 +515,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "super-supportive",
     title: "Super Supportive",
+    author: "Sleyca",
     synopsis:
       "In a superhero society coexisting with the Artonan alien alliance, Alden dreams of becoming a support hero, navigating grueling contractual duties and deep friendships.",
     status: NovelStatus.ONGOING,
@@ -495,6 +528,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-wandering-inn",
     title: "The Wandering Inn",
+    author: "pirateaba",
     synopsis:
       "Erin Solstice is suddenly teleported to a fantasy world inhabited by drakes, gnolls, and goblins. Seeking shelter in an abandoned building, she decides to become an innkeeper.",
     status: NovelStatus.ONGOING,
@@ -515,6 +549,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "mushoku-tensei",
     title: "Mushoku Tensei: Jobless Reincarnation",
+    author: "Rifujin na Magonote",
     originalTitle: "無職転生 - 異世界行ったら本気だす",
     synopsis:
       "A 34-year-old shut-in dies saving teenagers and reincarnates into a world of swords and sorcery as Rudeus Greyrat, resolved to live his second life without regret.",
@@ -534,6 +569,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "re-zero",
     title: "Re:Zero − Starting Life in Another World",
+    author: "Tappei Nagatsuki",
     originalTitle: "Re:ゼロから始める異世界生活",
     synopsis:
       "Subaru Natsuki is summoned to an unfamiliar fantasy capital and quickly discovers he has 'Return by Death'—a rewind ability triggered only when he suffers fatal harm.",
@@ -547,6 +583,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "ascendance-of-a-bookworm",
     title: "Ascendance of a Bookworm",
+    author: "Miya Kazuki",
     originalTitle: "本好きの下剋上",
     synopsis:
       "A young book-lover dies just after obtaining her librarian certificate and reincarnates as Myne, a sickly five-year-old peasant in a medieval world where books are luxury items.",
@@ -560,6 +597,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "overlord",
     title: "Overlord",
+    author: "Kugane Maruyama",
     originalTitle: "オーバーロード",
     synopsis:
       "When the DMMO-RPG Yggdrasil shuts down, guildmaster Momonga remains logged in. Transported with the Great Tomb of Nazarick to a new world, he adopts the name Ainz Ooal Gown.",
@@ -573,6 +611,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "the-eminence-in-shadow",
     title: "The Eminence in Shadow",
+    author: "Daisuke Aizawa",
     originalTitle: "陰の実力者になりたくて！",
     synopsis:
       "Obsessed with acting as a mysterious mastermind in the shadows, Cid Kagenou roleplays an anti-cult syndicate, unaware that all his made-up conspiracies are completely true.",
@@ -586,6 +625,7 @@ const NOVELS: SeedNovel[] = [
   {
     slug: "so-im-a-spider-so-what",
     title: "So I'm a Spider, So What?",
+    author: "Okina Baba",
     originalTitle: "蜘蛛ですが、なにか？",
     synopsis:
       "A high school classroom is wiped out by a rift in spacetime and reincarnated into a fantasy RPG world. A quiet girl awakens at the bottom of a labyrinth as a weak spider monster.",
@@ -630,6 +670,25 @@ for (const candidate of CATALOG_CANDIDATES) {
   }
 }
 
+type CoverEntry = { url: string; source?: string; verified?: boolean };
+
+function loadVerifiedCovers(): Record<string, CoverEntry> {
+  const file = path.join(__dirname, "covers.json");
+  if (!existsSync(file)) return {};
+  const parsed = JSON.parse(readFileSync(file, "utf8")) as {
+    covers?: Record<string, CoverEntry>;
+  };
+  return parsed.covers ?? {};
+}
+
+const verifiedCovers = loadVerifiedCovers();
+for (const novel of ALL_NOVELS) {
+  const cover = verifiedCovers[novel.slug];
+  if (cover?.url && cover.verified !== false && !novel.coverImageUrl) {
+    novel.coverImageUrl = cover.url;
+  }
+}
+
 function validateSeedData(novels: SeedNovel[]) {
   const slugs = new Set<string>();
   const names = new Set<string>();
@@ -638,6 +697,7 @@ function validateSeedData(novels: SeedNovel[]) {
     if (
       !novel.slug ||
       !novel.title ||
+      !novel.author ||
       !novel.synopsis ||
       !novel.countryOfOrigin
     ) {
@@ -660,6 +720,9 @@ function validateSeedData(novels: SeedNovel[]) {
     }
     if (novel.sourceUrl && !/^https?:\/\/\S+$/.test(novel.sourceUrl)) {
       throw new Error(`Invalid source URL for ${novel.slug}`);
+    }
+    if (novel.coverImageUrl && !/^https?:\/\/\S+$/.test(novel.coverImageUrl)) {
+      throw new Error(`Invalid cover URL for ${novel.slug}`);
     }
   }
 

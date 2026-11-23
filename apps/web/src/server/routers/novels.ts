@@ -50,6 +50,14 @@ async function uniqueSlug(db: Prisma.TransactionClient, base: string) {
 }
 
 export const novelsRouter = router({
+  genres: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.genreLink.findMany({
+      distinct: ["slug"],
+      orderBy: { name: "asc" },
+      select: { name: true, slug: true },
+    });
+  }),
+
   list: publicProcedure.input(listInput).query(async ({ ctx, input }) => {
     const where: Prisma.NovelWhereInput = { isHidden: false };
     if (input.status) where.status = input.status;
