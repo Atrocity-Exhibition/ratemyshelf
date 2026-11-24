@@ -11,6 +11,7 @@ export type CatalogQuery = {
   excludeGenres?: string[];
   tags?: string[];
   excludeTags?: string[];
+  ratedOnly?: boolean;
   page?: number;
 };
 
@@ -31,6 +32,7 @@ export function parseCatalogQuery(
     excludeGenres: parseSlugList(first(searchParams.excludeGenres)),
     tags: parseSlugList(first(searchParams.tags)),
     excludeTags: parseSlugList(first(searchParams.excludeTags)),
+    ratedOnly: first(searchParams.rated) === "1",
     page: Math.max(1, Number(first(searchParams.page) ?? 1) || 1),
   };
 }
@@ -52,6 +54,7 @@ export function buildCatalogQuery(
   if (query.excludeTags?.length) {
     params.set("excludeTags", query.excludeTags.join(","));
   }
+  if (query.ratedOnly) params.set("rated", "1");
   if (!options.omitPage && query.page && query.page > 1) {
     params.set("page", String(query.page));
   }

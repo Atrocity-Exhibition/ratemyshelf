@@ -21,6 +21,7 @@ export const listInput = z.object({
   genreSlugs: slugArraySchema.optional(),
   excludeGenreSlugs: slugArraySchema.optional(),
   excludeTagSlugs: slugArraySchema.optional(),
+  ratedOnly: z.boolean().default(false),
   sort: z.enum(["latest", "score", "chapters"]).default("latest"),
 });
 
@@ -72,7 +73,7 @@ export const novelsRouter = router({
     ];
     if (relationClauses.length) where.AND = relationClauses;
 
-    if (input.sort === "score") {
+    if (input.sort === "score" || input.ratedOnly) {
       // Prisma can't emit NULLS LAST for a relation, and Postgres puts the
       // nulls first on DESC, so unrated novels used to head the list. Only
       // novels with a rating belong in a "highest rated" view.

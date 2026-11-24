@@ -41,6 +41,10 @@ describe("novel search score filtering", () => {
     expect(buildFilter({ minScore: 85 })).toBe("bayesianScore >= 85");
   });
 
+  it("filters rated novels in Meilisearch", () => {
+    expect(buildFilter({ ratedOnly: true })).toBe("reviewCount > 0");
+  });
+
   it("normalizes direct search slug arrays", () => {
     expect(
       searchInput.parse({
@@ -52,6 +56,7 @@ describe("novel search score filtering", () => {
     ).toEqual({
       genres: ["fantasy"],
       excludeTags: ["slow-burn"],
+      ratedOnly: false,
     });
   });
 

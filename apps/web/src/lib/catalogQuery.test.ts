@@ -48,4 +48,10 @@ describe("catalog query state", () => {
 
     expect(query.toString()).toBe("genres=fantasy&excludeTags=harem");
   });
+
+  it("round-trips rated-only and defaults malformed values to false", () => {
+    expect(parseCatalogQuery({ rated: "1" }).ratedOnly).toBe(true);
+    expect(parseCatalogQuery({ rated: "true" }).ratedOnly).toBe(false);
+    expect(buildCatalogQuery({ ratedOnly: true }).toString()).toBe("rated=1");
+  });
 });

@@ -50,6 +50,11 @@ describe("catalog filter helpers", () => {
     });
   });
 
+  it("defaults rated-only to false and accepts the flag", () => {
+    expect(listInput.parse({}).ratedOnly).toBe(false);
+    expect(listInput.parse({ ratedOnly: true }).ratedOnly).toBe(true);
+  });
+
   it("rejects malformed and excessive direct catalog slug arrays", () => {
     expect(listInput.safeParse({ tagSlugs: ["not a slug"] }).success).toBe(
       false,

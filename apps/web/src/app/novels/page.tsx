@@ -29,6 +29,17 @@ export default async function NovelsPage({
   let items: NovelCardData[] = [];
   let total = 0;
   let totalPages = 1;
+  let genres: { name: string; slug: string }[] = [];
+  let tags: { name: string; slug: string }[] = [];
+
+  try {
+    [genres, tags] = await Promise.all([
+      api.novels.genres(),
+      api.tags.list({}),
+    ]);
+  } catch {
+    // Filter metadata is optional; catalog results can still render.
+  }
 
   if (q) {
     try {
@@ -55,6 +66,7 @@ export default async function NovelsPage({
           excludeTags: query.excludeTags,
           genres: query.genres,
           excludeGenres: query.excludeGenres,
+          ratedOnly: query.ratedOnly,
         },
       });
 
@@ -108,6 +120,7 @@ export default async function NovelsPage({
         genreSlugs: query.genres,
         excludeGenreSlugs: query.excludeGenres,
         excludeTagSlugs: query.excludeTags,
+        ratedOnly: query.ratedOnly,
         sort,
       });
       items = listRes.items;
@@ -130,7 +143,7 @@ export default async function NovelsPage({
 
   return (
     <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
-      <FilterPanel />
+      <FilterPanel genres={genres} tags={tags} />
       <div className="space-y-5">
         <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-neutral-200 pb-3 dark:border-neutral-800">
           <div>

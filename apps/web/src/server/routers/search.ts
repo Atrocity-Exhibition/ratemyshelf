@@ -23,6 +23,7 @@ export const searchInput = z.object({
       genres: slugArraySchema.optional(),
       excludeGenres: slugArraySchema.optional(),
       minScore: z.number().min(0).max(100).optional(),
+      ratedOnly: z.boolean().default(false),
     })
     .optional(),
   sort: z
@@ -31,7 +32,10 @@ export const searchInput = z.object({
 });
 
 export function buildFilter(
-  filters: NonNullable<z.infer<typeof searchInput>["filters"]>,
+  filters: Omit<
+    NonNullable<z.infer<typeof searchInput>["filters"]>,
+    "ratedOnly"
+  > & { ratedOnly?: boolean },
 ) {
   const clauses: string[] = [];
   if (filters.status) clauses.push(`status = "${filters.status}"`);
@@ -55,6 +59,7 @@ export function buildFilter(
   if (typeof filters.minScore === "number") {
     clauses.push(`bayesianScore >= ${filters.minScore}`);
   }
+  if (filters.ratedOnly) clauses.push("reviewCount > 0");
   return clauses.length > 0 ? clauses.join(" AND ") : undefined;
 }
 

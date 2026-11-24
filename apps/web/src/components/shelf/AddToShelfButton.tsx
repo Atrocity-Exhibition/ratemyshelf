@@ -38,10 +38,10 @@ export function AddToShelfButton({
     if (compact) return null;
     return (
       <Link
-        href="/login"
-        className="text-xs font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+        href={`/login?callbackUrl=${encodeURIComponent(typeof window === "undefined" ? "/" : window.location.pathname + window.location.search)}`}
+        className="inline-flex rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:bg-emerald-500 dark:hover:bg-emerald-400"
       >
-        Sign in to add this novel to a shelf
+        Sign in to add to shelf
       </Link>
     );
   }

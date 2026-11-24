@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { getApi } from "@/trpc/server";
 import { NovelGrid } from "@/components/catalog/NovelGrid";
+import { auth } from "@/auth";
+import { HomeHero } from "@/components/home/HomeHero";
+import { GenreBrowse } from "@/components/home/GenreBrowse";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const api = await getApi();
+  const session = await auth();
 
   let trending: Awaited<ReturnType<typeof api.novels.trending>> = [];
   let latest: Awaited<ReturnType<typeof api.novels.list>>["items"] = [];
+  let genres: { name: string; slug: string }[] = [];
 
   try {
     [trending, latest] = await Promise.all([
@@ -19,11 +24,19 @@ export default async function HomePage() {
     // The catalog renders empty until the database is reachable.
   }
 
+  try {
+    genres = await api.novels.genres();
+  } catch {
+    // Genre browsing is optional; the catalog sections can still render.
+  }
+
   return (
-    <div className="space-y-12">
+    <div className="space-y-10">
       <h1 className="sr-only">
         RateMyShelf — webnovel ratings, reviews and shelves
       </h1>
+      {!session?.user && <HomeHero />}
+      <GenreBrowse genres={genres} />
       {/* Trending / Top Section */}
       <section className="space-y-4">
         <div className="flex items-baseline justify-between border-b border-neutral-200 pb-3 dark:border-neutral-800">
