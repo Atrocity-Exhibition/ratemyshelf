@@ -5,10 +5,10 @@ import type { NovelCardData } from "@/types/catalog";
 import { AddToShelfButton } from "@/components/shelf/AddToShelfButton";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 
+export const NOVEL_CARD_FOOTER_CLASS = "flex flex-col gap-1.5";
 export const NOVEL_CARD_TAGS_CLASS =
   "flex min-w-0 flex-nowrap gap-1 overflow-x-auto whitespace-nowrap pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
-export const NOVEL_CARD_SHELF_CLASS =
-  "flex shrink-0 justify-end sm:justify-between";
+export const NOVEL_CARD_SHELF_CLASS = "flex shrink-0 justify-end";
 
 export function NovelCard({ novel }: { novel: NovelCardData }) {
   const score = novel.scoreCache?.bayesianScore;
@@ -61,7 +61,7 @@ export function NovelCard({ novel }: { novel: NovelCardData }) {
         <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
           {novel.author ?? "Author unknown"}
         </p>
-        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:gap-2">
+        <div className={NOVEL_CARD_FOOTER_CLASS}>
           <div className={NOVEL_CARD_TAGS_CLASS}>
             {novel.tags.slice(0, 3).map(({ tag }) => (
               <Link

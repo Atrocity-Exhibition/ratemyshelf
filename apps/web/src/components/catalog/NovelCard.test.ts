@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { NOVEL_CARD_SHELF_CLASS, NOVEL_CARD_TAGS_CLASS } from "./NovelCard";
+import {
+  NOVEL_CARD_FOOTER_CLASS,
+  NOVEL_CARD_SHELF_CLASS,
+  NOVEL_CARD_TAGS_CLASS,
+} from "./NovelCard";
 
 describe("NovelCard mobile footer layout", () => {
   it("keeps tags in a single touch-scrollable row", () => {
@@ -8,7 +12,8 @@ describe("NovelCard mobile footer layout", () => {
   });
 
   it("places the shelf control below the tags", () => {
+    expect(NOVEL_CARD_FOOTER_CLASS).toContain("flex-col");
+    expect(NOVEL_CARD_FOOTER_CLASS).not.toContain("flex-row");
     expect(NOVEL_CARD_SHELF_CLASS).toContain("justify-end");
-    expect(NOVEL_CARD_SHELF_CLASS).toContain("sm:justify-between");
   });
 });
