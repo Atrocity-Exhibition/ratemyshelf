@@ -1,10 +1,5 @@
 export { prisma } from "./client";
-export {
-  redis,
-  cacheGet,
-  cacheSet,
-  cacheDel,
-} from "./redis";
+export { redis, cacheGet, cacheSet, cacheDel } from "./redis";
 export { getQueue, type JobName } from "./queue";
 export {
   NOVELS_INDEX,
@@ -14,3 +9,8 @@ export {
   type NovelSearchDocument,
   type NovelWithRelations,
 } from "./search";
+export {
+  validateSeedCatalog,
+  normalizeCatalogName,
+  type SeedNovelRecord,
+} from "./seedValidation";

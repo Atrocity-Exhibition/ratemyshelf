@@ -7,75 +7,349 @@ import {
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { CATALOG_CANDIDATES } from "./catalogCandidates";
+import {
+  validateSeedCatalog,
+  normalizeCatalogName,
+  type SeedNovelRecord,
+} from "../src/seedValidation";
 
 const prisma = new PrismaClient();
 
-type SeedNovel = {
-  slug: string;
-  title: string;
-  author?: string;
-  originalTitle?: string;
-  synopsis: string;
-  status?: NovelStatus;
-  countryOfOrigin: Country;
-  chapterCount?: number;
-  tags: string[];
-  genres: string[];
-  aliases: string[];
-  coverImageUrl?: string;
-  source?: string;
-  sourceUrl?: string;
-};
+type SeedNovel = SeedNovelRecord;
 
-const TAGS: { name: string; slug: string; category: TagCategory }[] = [
-  // Genre / Themes
-  { name: "Cultivation", slug: "cultivation", category: TagCategory.GENRE },
-  { name: "LitRPG", slug: "litrpg", category: TagCategory.GENRE },
-  { name: "Romance", slug: "romance", category: TagCategory.GENRE },
-  { name: "Isekai", slug: "isekai", category: TagCategory.THEME },
+const TAGS: {
+  name: string;
+  slug: string;
+  category: TagCategory;
+  description?: string;
+}[] = [
+  // --- Core Webnovel Genres ---
+  {
+    name: "Cultivation",
+    slug: "cultivation",
+    category: TagCategory.GENRE,
+    description:
+      "Stories centering on martial, spiritual, or Daoist ascendance to immortality.",
+  },
+  {
+    name: "LitRPG",
+    slug: "litrpg",
+    category: TagCategory.GENRE,
+    description:
+      "Literary role-playing games where character progression is governed by explicit stats, levels, and skills.",
+  },
+  {
+    name: "Romance",
+    slug: "romance",
+    category: TagCategory.GENRE,
+    description:
+      "Narratives where romantic relationships play a central emotional and narrative role.",
+  },
+  {
+    name: "Action",
+    slug: "action",
+    category: TagCategory.GENRE,
+    description:
+      "Fast-moving conflict with frequent physical or magical confrontations.",
+  },
+  {
+    name: "Adventure",
+    slug: "adventure",
+    category: TagCategory.GENRE,
+    description: "Journeys into unknown lands, ruins, and perilous frontiers.",
+  },
+  {
+    name: "Comedy",
+    slug: "comedy",
+    category: TagCategory.GENRE,
+    description:
+      "Lighthearted or satirical stories designed for humor and amusement.",
+  },
+  {
+    name: "Mystery",
+    slug: "mystery",
+    category: TagCategory.GENRE,
+    description:
+      "Plots built around investigating puzzles, crimes, secrets, or occult enigmas.",
+  },
+  {
+    name: "Supernatural",
+    slug: "supernatural",
+    category: TagCategory.GENRE,
+    description:
+      "Forces, entities, and phenomena beyond natural physical laws.",
+  },
+  {
+    name: "Sci-Fi",
+    slug: "sci-fi",
+    category: TagCategory.GENRE,
+    description:
+      "Speculative fiction dealing with future technology, space travel, or scientific concepts.",
+  },
+  {
+    name: "Horror",
+    slug: "horror",
+    category: TagCategory.GENRE,
+    description:
+      "Fiction intended to elicit fear, dread, and atmospheric unease.",
+  },
+  {
+    name: "Drama",
+    slug: "drama",
+    category: TagCategory.GENRE,
+    description:
+      "Emotion-driven interpersonal conflict and serious character arcs.",
+  },
+  {
+    name: "Slice of Life",
+    slug: "slice-of-life",
+    category: TagCategory.GENRE,
+    description:
+      "Mundane daily routines, relaxed pacing, and character-driven interactions.",
+  },
+
+  // --- Themes & Tropes ---
+  {
+    name: "Isekai",
+    slug: "isekai",
+    category: TagCategory.THEME,
+    description:
+      "Protagonists transported, summoned, or trapped in an unfamiliar alternate world.",
+  },
+  {
+    name: "Transmigration",
+    slug: "transmigration",
+    category: TagCategory.THEME,
+    description:
+      "A soul crossing over to inhabit the body of another person in another time or world.",
+  },
+  {
+    name: "Reincarnation",
+    slug: "reincarnation",
+    category: TagCategory.THEME,
+    description:
+      "Starting life anew from birth or childhood with retained past-life memories.",
+  },
+  {
+    name: "Regression",
+    slug: "regression",
+    category: TagCategory.THEME,
+    description:
+      "Returning to a pivotal point in the past to prevent catastrophe armed with future knowledge.",
+  },
+  {
+    name: "Time Loop",
+    slug: "time-loop",
+    category: TagCategory.THEME,
+    description:
+      "Repeating a fixed span of time repeatedly until specific conditions are met.",
+  },
+  {
+    name: "System",
+    slug: "system",
+    category: TagCategory.THEME,
+    description:
+      "An interface, voice, or divine prompt providing quests, rewards, and status updates.",
+  },
   {
     name: "Weak to Strong",
     slug: "weak-to-strong",
     category: TagCategory.THEME,
+    description:
+      "A protagonist who begins with little power, status, or talent and steadily earns mastery.",
   },
-  { name: "Regression", slug: "regression", category: TagCategory.THEME },
-  { name: "Reincarnation", slug: "reincarnation", category: TagCategory.THEME },
-  { name: "Time Loop", slug: "time-loop", category: TagCategory.THEME },
+  {
+    name: "Overpowered Protagonist",
+    slug: "overpowered-protagonist",
+    category: TagCategory.THEME,
+    description:
+      "A lead character whose strength drastically outclasses typical opponents.",
+  },
+  {
+    name: "Smart Protagonist",
+    slug: "smart-protagonist",
+    category: TagCategory.THEME,
+    description:
+      "Hero who relies on intellect, strategy, cunning, and preparation rather than brute force.",
+  },
+  {
+    name: "Antihero",
+    slug: "antihero",
+    category: TagCategory.THEME,
+    description:
+      "A protagonist lacking conventional heroic virtues, operating by self-interest or grim pragmatism.",
+  },
+  {
+    name: "Villain Protagonist",
+    slug: "villain-protagonist",
+    category: TagCategory.THEME,
+    description:
+      "A main character who acts as the antagonist to the world, often ruthless or morally corrupt.",
+  },
   {
     name: "Kingdom Building",
     slug: "kingdom-building",
     category: TagCategory.THEME,
+    description:
+      "Establishing, administering, defending, and expanding a territory, faction, or empire.",
   },
-  { name: "Antihero", slug: "antihero", category: TagCategory.THEME },
-  { name: "Dungeon", slug: "dungeon", category: TagCategory.SETTING },
+  {
+    name: "Crafting",
+    slug: "crafting",
+    category: TagCategory.THEME,
+    description:
+      "In-depth focus on blacksmithing, alchemy, enchantment, engineering, or artifact creation.",
+  },
+  {
+    name: "Necromancy",
+    slug: "necromancy",
+    category: TagCategory.THEME,
+    description:
+      "The manipulation of life and death, commanding undead minions and spirit arts.",
+  },
+  {
+    name: "Revenge",
+    slug: "revenge",
+    category: TagCategory.THEME,
+    description:
+      "A quest to extract vengeance from betrayers, corrupt nobles, or hostile factions.",
+  },
+  {
+    name: "Martial Arts",
+    slug: "martial-arts",
+    category: TagCategory.THEME,
+    description:
+      "Unarmed combat, weapon mastery, inner breathing, and disciplined combat traditions.",
+  },
+
+  // --- Setting ---
+  {
+    name: "Dungeon",
+    slug: "dungeon",
+    category: TagCategory.SETTING,
+    description:
+      "Labyrinths, towers, and supernatural subterranean structures housing monsters and loot.",
+  },
   {
     name: "Magic Academy",
     slug: "magic-academy",
     category: TagCategory.SETTING,
+    description:
+      "Institutions of higher learning, cadet trials, and student rivalries centered on magical arts.",
   },
   {
     name: "Post-Apocalyptic",
     slug: "post-apocalyptic",
     category: TagCategory.SETTING,
+    description:
+      "Civilization rebuilt or barely surviving after catastrophic collapse.",
+  },
+  {
+    name: "Urban Fantasy",
+    slug: "urban-fantasy",
+    category: TagCategory.SETTING,
+    description:
+      "Hidden supernatural elements, secret societies, and magical factions within a modern city.",
+  },
+  {
+    name: "Virtual Reality",
+    slug: "virtual-reality",
+    category: TagCategory.SETTING,
+    description:
+      "Full-dive neural gear, digital fantasy realms, and game worlds.",
+  },
+  {
+    name: "Space",
+    slug: "space",
+    category: TagCategory.SETTING,
+    description: "Interstellar voyages, orbital habitats, and cosmic empires.",
+  },
+  {
+    name: "Monsters",
+    slug: "monsters",
+    category: TagCategory.SETTING,
+    description:
+      "Wild beasts, mutated horrors, demonic incursions, and non-human adversaries.",
+  },
+  {
+    name: "Mythology",
+    slug: "mythology",
+    category: TagCategory.SETTING,
+    description:
+      "Pantheons of gods, mythological deities, ancient folklore, and sacred legends.",
   },
   {
     name: "Male Protagonist",
     slug: "male-protagonist",
     category: TagCategory.SETTING,
+    description: "Stories told from the primary viewpoint of a male character.",
   },
   {
     name: "Female Protagonist",
     slug: "female-protagonist",
     category: TagCategory.SETTING,
+    description:
+      "Stories told from the primary viewpoint of a female character.",
   },
-  { name: "Gore", slug: "gore", category: TagCategory.CONTENT_WARNING },
+
+  // --- Content Warnings & Tone ---
+  {
+    name: "Gore",
+    slug: "gore",
+    category: TagCategory.CONTENT_WARNING,
+    description: "Graphic bodily harm, visceral violence, and explicit wounds.",
+  },
+  {
+    name: "Dark",
+    slug: "dark",
+    category: TagCategory.CONTENT_WARNING,
+    description:
+      "Bleak atmosphere, grim stakes, morally grey circumstances, and high mortality.",
+  },
+  {
+    name: "Tragedy",
+    slug: "tragedy",
+    category: TagCategory.CONTENT_WARNING,
+    description:
+      "Painful loss, doomed aspirations, heartbreak, and sacrificial suffering.",
+  },
   {
     name: "Psychological",
     slug: "psychological",
     category: TagCategory.CONTENT_WARNING,
+    description:
+      "Deep exploration of sanity, paranoia, trauma, identity, and mental strain.",
   },
-  { name: "Slow Burn", slug: "slow-burn", category: TagCategory.FORMAT },
-  { name: "Multiple POV", slug: "multiple-pov", category: TagCategory.FORMAT },
+
+  // --- Format & Pacing ---
+  {
+    name: "Slow Burn",
+    slug: "slow-burn",
+    category: TagCategory.FORMAT,
+    description:
+      "Patient buildup, extensive world immersion, and deliberate character development.",
+  },
+  {
+    name: "Fast-Paced",
+    slug: "fast-paced",
+    category: TagCategory.FORMAT,
+    description:
+      "High-momentum events with rapid transitions from encounter to encounter.",
+  },
+  {
+    name: "Multiple POV",
+    slug: "multiple-pov",
+    category: TagCategory.FORMAT,
+    description:
+      "Narrative shifts between varied characters, perspectives, and geographic locations.",
+  },
+  {
+    name: "Episodic",
+    slug: "episodic",
+    category: TagCategory.FORMAT,
+    description:
+      "Self-contained arcs, short investigations, or modular adventures within a broader tapestry.",
+  },
 ];
 
 const NOVELS: SeedNovel[] = [
@@ -646,27 +920,25 @@ const NOVELS: SeedNovel[] = [
 
 const ALL_NOVELS: SeedNovel[] = [...NOVELS];
 const existingSlugs = new Set(ALL_NOVELS.map((novel) => novel.slug));
-const normalizeName = (value: string) =>
-  value
-    .toLocaleLowerCase()
-    .replace(/[^a-z0-9\u00c0-\u024f\u4e00-\u9fff]+/g, "");
 const existingNames = new Set(
   ALL_NOVELS.flatMap((novel) => [
-    normalizeName(novel.title),
-    ...novel.aliases.map(normalizeName),
+    normalizeCatalogName(novel.title),
+    ...novel.aliases.map(normalizeCatalogName),
   ]),
 );
 for (const candidate of CATALOG_CANDIDATES) {
   if (
     !existingSlugs.has(candidate.slug) &&
-    !existingNames.has(normalizeName(candidate.title)) &&
-    !candidate.aliases.some((alias) => existingNames.has(normalizeName(alias)))
+    !existingNames.has(normalizeCatalogName(candidate.title)) &&
+    !candidate.aliases.some((alias) =>
+      existingNames.has(normalizeCatalogName(alias)),
+    )
   ) {
     ALL_NOVELS.push(candidate);
     existingSlugs.add(candidate.slug);
-    existingNames.add(normalizeName(candidate.title));
+    existingNames.add(normalizeCatalogName(candidate.title));
     for (const alias of candidate.aliases)
-      existingNames.add(normalizeName(alias));
+      existingNames.add(normalizeCatalogName(alias));
   }
 }
 
@@ -689,64 +961,18 @@ for (const novel of ALL_NOVELS) {
   }
 }
 
-function validateSeedData(novels: SeedNovel[]) {
-  const slugs = new Set<string>();
-  const names = new Set<string>();
-
-  for (const novel of novels) {
-    if (
-      !novel.slug ||
-      !novel.title ||
-      !novel.author ||
-      !novel.synopsis ||
-      !novel.countryOfOrigin
-    ) {
-      throw new Error(
-        `Invalid catalog record: ${novel.slug || novel.title || "untitled"}`,
-      );
-    }
-    if (slugs.has(novel.slug))
-      throw new Error(`Duplicate novel slug: ${novel.slug}`);
-    if (names.has(normalizeName(novel.title))) {
-      throw new Error(`Duplicate novel title: ${novel.title}`);
-    }
-    slugs.add(novel.slug);
-    names.add(normalizeName(novel.title));
-    for (const alias of novel.aliases) {
-      if (names.has(normalizeName(alias))) {
-        throw new Error(`Duplicate novel alias: ${alias}`);
-      }
-      names.add(normalizeName(alias));
-    }
-    if (novel.sourceUrl && !/^https?:\/\/\S+$/.test(novel.sourceUrl)) {
-      throw new Error(`Invalid source URL for ${novel.slug}`);
-    }
-    if (novel.coverImageUrl && !/^https?:\/\/\S+$/.test(novel.coverImageUrl)) {
-      throw new Error(`Invalid cover URL for ${novel.slug}`);
-    }
-  }
-
-  const counts = new Map<Country, number>();
-  for (const novel of novels) {
-    counts.set(
-      novel.countryOfOrigin,
-      (counts.get(novel.countryOfOrigin) ?? 0) + 1,
-    );
-  }
-  for (const country of [Country.CN, Country.KR, Country.EN]) {
-    if ((counts.get(country) ?? 0) < 10) {
-      throw new Error(`Catalog balance check failed for ${country}`);
-    }
-  }
-}
-
 async function main() {
-  validateSeedData(ALL_NOVELS);
+  validateSeedCatalog(ALL_NOVELS, new Set(TAGS.map((t) => t.slug)));
   console.log(`Seeding ${TAGS.length} tags...`);
   for (const tag of TAGS) {
     await prisma.tag.upsert({
       where: { slug: tag.slug },
-      update: { name: tag.name, category: tag.category, isApproved: true },
+      update: {
+        name: tag.name,
+        category: tag.category,
+        description: tag.description ?? null,
+        isApproved: true,
+      },
       create: { ...tag, isApproved: true },
     });
   }
