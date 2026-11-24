@@ -5,6 +5,11 @@ import type { NovelCardData } from "@/types/catalog";
 import { AddToShelfButton } from "@/components/shelf/AddToShelfButton";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 
+export const NOVEL_CARD_TAGS_CLASS =
+  "flex min-w-0 flex-nowrap gap-1 overflow-x-auto whitespace-nowrap pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+export const NOVEL_CARD_SHELF_CLASS =
+  "flex shrink-0 justify-end sm:justify-between";
+
 export function NovelCard({ novel }: { novel: NovelCardData }) {
   const score = novel.scoreCache?.bayesianScore;
 
@@ -56,19 +61,21 @@ export function NovelCard({ novel }: { novel: NovelCardData }) {
         <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
           {novel.author ?? "Author unknown"}
         </p>
-        <div className="flex items-end justify-between gap-2">
-          <div className="flex min-w-0 flex-wrap gap-1">
+        <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:gap-2">
+          <div className={NOVEL_CARD_TAGS_CLASS}>
             {novel.tags.slice(0, 3).map(({ tag }) => (
               <Link
                 key={tag.slug}
                 href={`/novels?tags=${tag.slug}`}
-                className="rounded border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700/60 dark:bg-neutral-800/60 dark:text-neutral-300 dark:hover:border-neutral-500 dark:hover:text-white"
+                className="shrink-0 whitespace-nowrap rounded border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 text-[10px] font-medium text-neutral-600 transition hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700/60 dark:bg-neutral-800/60 dark:text-neutral-300 dark:hover:border-neutral-500 dark:hover:text-white"
               >
                 {tag.name}
               </Link>
             ))}
           </div>
-          <AddToShelfButton novelId={novel.id} compact />
+          <div className={NOVEL_CARD_SHELF_CLASS}>
+            <AddToShelfButton novelId={novel.id} compact />
+          </div>
         </div>
       </div>
     </article>
