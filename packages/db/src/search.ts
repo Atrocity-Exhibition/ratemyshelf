@@ -104,12 +104,15 @@ export async function configureNovelIndex(): Promise<void> {
     typoTolerance: {
       minWordSizeForTypos: { oneTypo: 4, twoTypos: 8 },
     },
+    // `sort` must lead: when it sits after `attribute`, relevance outranks the
+    // requested order, so "Highest Rated" on a search returned unranked hits.
+    // Meilisearch ignores this rule when the query has no `sort` parameter.
     rankingRules: [
+      "sort",
       "words",
       "typo",
       "proximity",
       "attribute",
-      "sort",
       "exactness",
     ],
   });
