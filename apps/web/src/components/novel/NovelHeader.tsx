@@ -57,6 +57,14 @@ export function NovelHeader({ novel }: { novel: NovelDetailData }) {
         <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-neutral-600 dark:text-neutral-300">
           {novel.synopsis}
         </p>
+        {novel.aliases && novel.aliases.length > 0 && (
+          <div className="pt-1 text-xs text-neutral-500 dark:text-neutral-400">
+            <span className="font-semibold text-neutral-700 dark:text-neutral-300">
+              Also known as:{" "}
+            </span>
+            {novel.aliases.map((a) => a.alias).join(", ")}
+          </div>
+        )}
       </div>
     </header>
   );

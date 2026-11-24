@@ -5,7 +5,6 @@ import { NovelHeader } from "@/components/novel/NovelHeader";
 import { NovelScorePanel } from "@/components/novel/NovelScorePanel";
 import { NovelTagList } from "@/components/novel/NovelTagList";
 import { TagVotePanel } from "@/components/novel/TagVotePanel";
-import { AliasesSection } from "@/components/novel/AliasesSection";
 import { ExternalLinksPanel } from "@/components/novel/ExternalLinksPanel";
 import { AddToShelfButton } from "@/components/shelf/AddToShelfButton";
 import { AddToListButton } from "@/components/lists/AddToListButton";
@@ -26,7 +25,11 @@ async function loadNovel(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Params;
+}): Promise<Metadata> {
   const { slug } = await params;
   const novel = await loadNovel(slug);
   if (!novel) return { title: "Novel not found" };
@@ -57,7 +60,8 @@ export default async function NovelPage({ params }: { params: Params }) {
 
   const detail = {
     ...novel,
-    externalLinks: (novel.externalLinks ?? []) as NovelDetailData["externalLinks"],
+    externalLinks: (novel.externalLinks ??
+      []) as NovelDetailData["externalLinks"],
   } as NovelDetailData;
 
   return (
@@ -71,11 +75,6 @@ export default async function NovelPage({ params }: { params: Params }) {
 
       <NovelScorePanel novel={detail} />
       <NovelTagList novel={detail} />
-      <TagVotePanel
-        novelId={novel.id}
-        currentTagIds={novel.tags.map((entry) => entry.tagId)}
-      />
-      <AliasesSection novel={detail} />
       <ExternalLinksPanel novel={detail} />
 
       <section className="space-y-4">
@@ -83,9 +82,18 @@ export default async function NovelPage({ params }: { params: Params }) {
         <ReviewForm novelId={novel.id} />
         <ReviewList
           novelId={novel.id}
-          initialData={reviews as unknown as Parameters<typeof ReviewList>[0]["initialData"]}
+          initialData={
+            reviews as unknown as Parameters<
+              typeof ReviewList
+            >[0]["initialData"]
+          }
         />
       </section>
+
+      <TagVotePanel
+        novelId={novel.id}
+        currentTagIds={novel.tags.map((entry) => entry.tagId)}
+      />
     </div>
   );
 }

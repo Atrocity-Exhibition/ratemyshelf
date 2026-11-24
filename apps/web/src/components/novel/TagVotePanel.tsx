@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { trpc } from "@/trpc/client";
 
-const CATEGORIES = ["GENRE", "CONTENT_WARNING", "THEME", "SETTING", "FORMAT"] as const;
+const CATEGORIES = [
+  "GENRE",
+  "CONTENT_WARNING",
+  "THEME",
+  "SETTING",
+  "FORMAT",
+] as const;
 type Category = (typeof CATEGORIES)[number];
 
 export function TagVotePanel({
@@ -38,22 +44,31 @@ export function TagVotePanel({
     onError: (error) => setMessage(error.message),
   });
 
-  const available = (tags ?? []).filter((tag) => !currentTagIds.includes(tag.id));
+  const available = (tags ?? []).filter(
+    (tag) => !currentTagIds.includes(tag.id),
+  );
 
   return (
-    <section className="space-y-3 rounded-xl border border-slate-800/80 bg-slate-900/40 p-4">
-      <h2 className="font-semibold text-slate-200">Community tags</h2>
-      <p className="text-sm text-slate-400">
-        Vote on missing tags. A tag is attached at net +5 and removed at net -5.
-      </p>
+    <section className="space-y-4 rounded-xl border border-neutral-200 bg-white p-5 shadow-xs dark:border-neutral-800 dark:bg-[#16171c]">
+      <div>
+        <h2 className="text-sm font-bold text-neutral-900 dark:text-neutral-100">
+          Community tags
+        </h2>
+        <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+          Vote on missing tags. A tag is attached at net +5 and removed at net
+          -5.
+        </p>
+      </div>
 
-      <div className="flex flex-wrap items-end gap-2">
-        <label className="text-sm">
-          <span className="mb-1 block text-slate-400">Existing tag</span>
+      <div className="flex flex-wrap items-end gap-2.5">
+        <label className="text-xs">
+          <span className="mb-1 block font-semibold text-neutral-600 dark:text-neutral-400">
+            Existing tag
+          </span>
           <select
             value={tagId}
             onChange={(event) => setTagId(event.target.value)}
-            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
+            className="rounded-lg border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs text-neutral-800 outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
           >
             <option value="">Select a tag</option>
             {available.map((tag) => (
@@ -67,7 +82,7 @@ export function TagVotePanel({
           type="button"
           disabled={!tagId || vote.isPending}
           onClick={() => vote.mutate({ tagId, novelId, vote: 1 })}
-          className="rounded-lg bg-emerald-600 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm shadow-emerald-600/20 transition hover:bg-emerald-500 disabled:opacity-40"
+          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-emerald-500 disabled:opacity-40"
         >
           Upvote
         </button>
@@ -75,32 +90,36 @@ export function TagVotePanel({
           type="button"
           disabled={!tagId || vote.isPending}
           onClick={() => vote.mutate({ tagId, novelId, vote: -1 })}
-          className="rounded-lg border border-red-800/70 bg-red-950/20 px-3.5 py-1.5 text-sm font-medium text-red-300 transition hover:bg-red-900/30 hover:border-red-700 disabled:opacity-40"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300 dark:hover:bg-red-900/40 disabled:opacity-40"
         >
           Downvote
         </button>
       </div>
 
-      <div className="flex flex-wrap items-end gap-2 border-t border-slate-800/80 pt-3">
-        <label className="text-sm">
-          <span className="mb-1 block text-slate-400">Propose a tag</span>
+      <div className="flex flex-wrap items-end gap-2.5 border-t border-neutral-100 pt-3.5 dark:border-neutral-800">
+        <label className="text-xs">
+          <span className="mb-1 block font-semibold text-neutral-600 dark:text-neutral-400">
+            Propose a tag
+          </span>
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Tag name"
-            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
+            className="rounded-lg border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs text-neutral-800 outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
           />
         </label>
-        <label className="text-sm">
-          <span className="mb-1 block text-slate-400">Category</span>
+        <label className="text-xs">
+          <span className="mb-1 block font-semibold text-neutral-600 dark:text-neutral-400">
+            Category
+          </span>
           <select
             value={category}
             onChange={(event) => setCategory(event.target.value as Category)}
-            className="rounded-lg border border-slate-700/80 bg-slate-950/80 px-2.5 py-1.5 text-slate-200"
+            className="rounded-lg border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs text-neutral-800 outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
           >
             {CATEGORIES.map((value) => (
               <option key={value} value={value}>
-                {value}
+                {value === "THEME" ? "GENRE" : value.replace("_", " ")}
               </option>
             ))}
           </select>
@@ -109,13 +128,17 @@ export function TagVotePanel({
           type="button"
           disabled={name.trim().length < 2 || propose.isPending}
           onClick={() => propose.mutate({ name: name.trim(), category })}
-          className="rounded-lg border border-slate-700/80 bg-slate-800/40 px-3.5 py-1.5 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:bg-slate-800 hover:text-white disabled:opacity-40"
+          className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-semibold text-neutral-800 transition hover:border-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:border-neutral-600 disabled:opacity-40"
         >
           Propose
         </button>
       </div>
 
-      {message && <p className="text-sm text-slate-400">{message}</p>}
+      {message && (
+        <p className="text-xs text-neutral-500 dark:text-neutral-400">
+          {message}
+        </p>
+      )}
     </section>
   );
 }
