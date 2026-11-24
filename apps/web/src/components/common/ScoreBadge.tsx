@@ -71,13 +71,19 @@ export function ScoreBadge({
   /** Dark translucent backing for use on top of cover images. */
   overlay?: boolean;
 }) {
+  const hasScore = score != null && Number.isFinite(score);
+
+  // On cover art an empty ring reads as a broken control, so omit it entirely.
+  if (overlay && !hasScore) return null;
+
   const colors = getScoreColor(score, scale);
+  const numeric = hasScore ? Number(score) : null;
   const displayScore: string =
-    score != null && Number.isFinite(score)
-      ? scale === 100
-        ? String(Math.round(score))
-        : score.toFixed(1)
-      : "—";
+    numeric === null
+      ? "—"
+      : scale === 100
+        ? String(Math.round(numeric))
+        : numeric.toFixed(1);
   const surface = overlay ? "bg-black/55 backdrop-blur-sm" : colors.bg;
   const accessibleLabel = scoreLabel(score, displayScore, scale);
 

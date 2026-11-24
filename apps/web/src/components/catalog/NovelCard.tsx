@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ImageOff } from "lucide-react";
 import type { NovelCardData } from "@/types/catalog";
 import { AddToShelfButton } from "@/components/shelf/AddToShelfButton";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
@@ -24,12 +25,13 @@ export function NovelCard({ novel }: { novel: NovelCardData }) {
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full flex-col justify-between bg-gradient-to-br from-neutral-100 to-neutral-200 p-3 dark:from-neutral-800 dark:to-neutral-900">
+            <div className="flex h-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-neutral-100 to-neutral-200 p-3 dark:from-neutral-800 dark:to-neutral-900">
+              <ImageOff
+                aria-hidden
+                className="h-5 w-5 text-neutral-400 dark:text-neutral-500"
+              />
               <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-neutral-500 dark:text-neutral-400">
                 No cover
-              </span>
-              <span className="line-clamp-4 text-left text-sm font-bold leading-snug text-neutral-700 dark:text-neutral-200">
-                {novel.title}
               </span>
             </div>
           )}

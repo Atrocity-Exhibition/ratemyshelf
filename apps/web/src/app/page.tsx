@@ -21,6 +21,9 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-12">
+      <h1 className="sr-only">
+        RateMyShelf — webnovel ratings, reviews and shelves
+      </h1>
       {/* Trending / Top Section */}
       <section className="space-y-4">
         <div className="flex items-baseline justify-between border-b border-neutral-200 pb-3 dark:border-neutral-800">
