@@ -1214,7 +1214,7 @@ export const NOVELS: SeedNovel[] = [
   },
 ];
 
-const ALL_NOVELS: SeedNovel[] = [...NOVELS];
+export const ALL_NOVELS: SeedNovel[] = [...NOVELS];
 const existingSlugs = new Set(ALL_NOVELS.map((novel) => novel.slug));
 const existingNames = new Set(
   ALL_NOVELS.flatMap((novel) => [

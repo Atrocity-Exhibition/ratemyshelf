@@ -41,4 +41,14 @@ describe("seed catalog validation", () => {
       validateSeedCatalog([validBaseNovel, duplicateNovel], allowedTagSlugs),
     ).toThrow(/duplicate novel title/i);
   });
+
+  it("validates that the complete seed catalog contains at least 112 novels without validation errors", async () => {
+    const { ALL_NOVELS, TAGS } =
+      await import("../../../../packages/db/prisma/seed");
+    expect(ALL_NOVELS.length).toBeGreaterThanOrEqual(112);
+    const allowedTagSlugs = new Set(TAGS.map((t) => t.slug));
+    expect(() =>
+      validateSeedCatalog(ALL_NOVELS, allowedTagSlugs),
+    ).not.toThrow();
+  });
 });
