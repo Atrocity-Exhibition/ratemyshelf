@@ -3,14 +3,11 @@
 import { useState } from "react";
 import { trpc } from "@/trpc/client";
 
-const CATEGORIES = [
-  "GENRE",
-  "CONTENT_WARNING",
-  "THEME",
-  "SETTING",
-  "FORMAT",
+const PROPOSAL_CATEGORIES = [
+  { value: "THEME", label: "Tag" },
+  { value: "GENRE", label: "Genre" },
 ] as const;
-type Category = (typeof CATEGORIES)[number];
+type Category = (typeof PROPOSAL_CATEGORIES)[number]["value"];
 
 export function TagVotePanel({
   novelId,
@@ -117,12 +114,9 @@ export function TagVotePanel({
             onChange={(event) => setCategory(event.target.value as Category)}
             className="rounded-lg border border-neutral-300 bg-neutral-50 px-2.5 py-1.5 text-xs text-neutral-800 outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
           >
-            {CATEGORIES.map((value) => (
+            {PROPOSAL_CATEGORIES.map(({ value, label }) => (
               <option key={value} value={value}>
-                {value === "THEME"
-                  ? "Genre"
-                  : value.charAt(0) +
-                    value.slice(1).toLowerCase().replace("_", " ")}
+                {label}
               </option>
             ))}
           </select>
