@@ -90,7 +90,7 @@ export default async function GenresTagsPage() {
     ...genre,
     description:
       GENRE_DESCRIPTIONS[genre.slug] ??
-      "Explore novels connected by a shared story tradition or theme.",
+      "Explore novels connected by a shared story tradition or genre.",
   }));
   const sortedTags = sortDiscoveryItems(tags).map(({ name, slug }) => ({
     name,
@@ -152,7 +152,7 @@ export default async function GenresTagsPage() {
                 Tags
               </h2>
               <p className="mt-1 text-xs text-neutral-500 dark:text-neutral-400">
-                Specific themes and story details.
+                Specific story elements and details.
               </p>
             </div>
             <span className="text-xs text-neutral-400">

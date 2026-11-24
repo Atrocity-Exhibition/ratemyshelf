@@ -119,7 +119,10 @@ export function TagVotePanel({
           >
             {CATEGORIES.map((value) => (
               <option key={value} value={value}>
-                {value === "THEME" ? "GENRE" : value.replace("_", " ")}
+                {value === "THEME"
+                  ? "Genre"
+                  : value.charAt(0) +
+                    value.slice(1).toLowerCase().replace("_", " ")}
               </option>
             ))}
           </select>
